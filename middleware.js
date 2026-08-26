@@ -1,0 +1,26 @@
+import { auth } from '@/lib/auth'
+
+// Gate every page/API route behind the single-user session. Logged-out users
+// are bounced to /login; logged-in users hitting /login are sent to /dashboard.
+export default auth((req) => {
+  const { pathname } = req.nextUrl
+  const isLoggedIn = !!req.auth
+  const isLoginPage = pathname === '/login'
+
+  if (isLoginPage) {
+    if (isLoggedIn) {
+      return Response.redirect(new URL('/dashboard', req.nextUrl))
+    }
+    return
+  }
+
+  if (!isLoggedIn) {
+    const url = new URL('/login', req.nextUrl)
+    return Response.redirect(url)
+  }
+})
+
+// Run on everything except NextAuth's own endpoints, Next internals, and static files.
+export const config = {
+  matcher: ['/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp)$).*)'],
+}

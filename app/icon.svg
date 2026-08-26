@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- App favicon — mirrors the in-app brand mark (Sidebar/AppShell ₦ tile).
+       Tile colour is the accent token (--accent). The ₦ is drawn as strokes,
+       not text, so it renders identically everywhere regardless of whether the
+       tab's font has a naira glyph. Swap the fill alongside --accent when the
+       real brand purple is provided. -->
+  <rect width="64" height="64" rx="12" fill="#6366f1"/>
+  <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 44 V20 L42 44 V20"/>
+    <path d="M16 28 H48"/>
+    <path d="M16 36 H48"/>
+  </g>
+</svg>
