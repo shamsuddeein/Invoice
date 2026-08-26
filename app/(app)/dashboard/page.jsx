@@ -1,10 +1,6 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import PageHeader from '@/components/layout/PageHeader'
 import Button from '@/components/ui/Button'
-import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import {
   PlusIcon,
   PaymentsIcon,
@@ -14,31 +10,29 @@ import {
 } from '@/components/ui/icons'
 import MetricCard from '@/components/dashboard/MetricCard'
 import RecentInvoices from '@/components/dashboard/RecentInvoices'
-import { jsonFetch } from '@/lib/fetcher'
 import { formatNaira } from '@/lib/utils'
+import { getDashboardData } from '@/lib/queries'
+
+// Live data on every request — never statically cache at build time.
+export const dynamic = 'force-dynamic'
 
 // Friendly label for the current month, e.g. "August 2026".
 function currentMonthLabel() {
   return new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
 }
 
-export default function DashboardPage() {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    ;(async () => {
-      try {
-        setData(await jsonFetch('/api/dashboard'))
-        setError('')
-      } catch (e) {
-        setError(e.message)
-      } finally {
-        setLoading(false)
-      }
-    })()
-  }, [])
+// Server Component: metrics + recent invoices are fetched server-side and
+// rendered in the first response — no client fetch, no loading spinner. The
+// page has no interactivity of its own (Quick Actions are plain links), so it
+// needs no client island.
+export default async function DashboardPage() {
+  let data = null
+  let error = ''
+  try {
+    data = await getDashboardData()
+  } catch (e) {
+    error = e?.message || 'Could not load the dashboard.'
+  }
 
   const m = data?.metrics
 
@@ -67,11 +61,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      {loading ? (
-        <div className="flex justify-center py-24 text-text-muted">
-          <LoadingSpinner size={24} />
-        </div>
-      ) : error ? (
+      {error ? (
         <div
           className="text-sm text-error"
           style={{ background: 'var(--error-muted)', padding: '10px 14px', borderRadius: 'var(--r-md)' }}

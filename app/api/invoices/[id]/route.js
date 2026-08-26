@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { eq, asc } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { invoices, invoiceItems, clients, payments } from '@/lib/schema'
-import { nowISO } from '@/lib/utils'
+import { nowISO, round2 } from '@/lib/utils'
 
 // Live data on every request — never statically cache this GET at build time.
 export const dynamic = 'force-dynamic'
@@ -65,12 +65,12 @@ export async function PUT(req, { params }) {
   }
 
   const taxRate = body.taxRate != null ? Number(body.taxRate) || 0 : existing.taxRate || 0
-  const computed = items.map((it) => ({ ...it, lineTotal: it.quantity * it.unitPrice }))
-  const subtotal = computed.reduce((s, it) => s + it.lineTotal, 0)
-  const taxAmount = subtotal * (taxRate / 100)
-  const totalAmount = subtotal + taxAmount
+  const computed = items.map((it) => ({ ...it, lineTotal: round2(it.quantity * it.unitPrice) }))
+  const subtotal = round2(computed.reduce((s, it) => s + it.lineTotal, 0))
+  const taxAmount = round2(subtotal * (taxRate / 100))
+  const totalAmount = round2(subtotal + taxAmount)
   const amountPaid = existing.amountPaid || 0
-  const balanceDue = totalAmount - amountPaid
+  const balanceDue = round2(totalAmount - amountPaid)
 
   // Re-derive status from payments. Draft/sent are preserved when nothing is paid;
   // paid-family resets to sent when the balance reopens (e.g. items were added).

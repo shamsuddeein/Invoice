@@ -1,28 +1,18 @@
 import { NextResponse } from 'next/server'
-import { desc, or, like } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { clients } from '@/lib/schema'
 import { nowISO } from '@/lib/utils'
+import { getClientsList } from '@/lib/queries'
 
 // Live data on every request — never statically cache this GET at build time.
 export const dynamic = 'force-dynamic'
 
 // GET /api/clients?q=  → list (newest first), optional name/email/phone search.
+// The page Server-renders this via the shared getClientsList(); this route
+// serves the same shape for client-side refresh after a mutation.
 export async function GET(req) {
   const q = req.nextUrl.searchParams.get('q')?.trim()
-  const base = db.select().from(clients)
-  const rows = q
-    ? await base
-        .where(
-          or(
-            like(clients.name, `%${q}%`),
-            like(clients.email, `%${q}%`),
-            like(clients.phone, `%${q}%`)
-          )
-        )
-        .orderBy(desc(clients.createdAt))
-    : await base.orderBy(desc(clients.createdAt))
-  return NextResponse.json(rows)
+  return NextResponse.json(await getClientsList({ q }))
 }
 
 // POST /api/clients → create.

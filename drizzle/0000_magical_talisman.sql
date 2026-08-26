@@ -67,5 +67,11 @@ CREATE TABLE `payments` (
 	FOREIGN KEY (`invoice_id`) REFERENCES `invoices`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
+CREATE INDEX `invoice_items_invoice_id_idx` ON `invoice_items` (`invoice_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `invoices_invoice_number_unique` ON `invoices` (`invoice_number`);--> statement-breakpoint
-CREATE UNIQUE INDEX `payments_receipt_number_unique` ON `payments` (`receipt_number`);
+CREATE INDEX `invoices_client_id_idx` ON `invoices` (`client_id`);--> statement-breakpoint
+CREATE INDEX `invoices_status_idx` ON `invoices` (`status`);--> statement-breakpoint
+CREATE INDEX `invoices_created_at_idx` ON `invoices` (`created_at`);--> statement-breakpoint
+CREATE UNIQUE INDEX `payments_receipt_number_unique` ON `payments` (`receipt_number`);--> statement-breakpoint
+CREATE INDEX `payments_invoice_id_idx` ON `payments` (`invoice_id`);--> statement-breakpoint
+CREATE INDEX `payments_payment_date_idx` ON `payments` (`payment_date`);

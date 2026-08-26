@@ -1,41 +1,19 @@
 import { NextResponse } from 'next/server'
-import { and, eq, or, like, desc } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { invoices, invoiceItems, clients, business } from '@/lib/schema'
-import { generateDocNumber, nowISO, todayISO } from '@/lib/utils'
+import { generateDocNumber, nowISO, todayISO, round2 } from '@/lib/utils'
+import { getInvoicesList } from '@/lib/queries'
 
 // Live data on every request — never statically cache this GET at build time.
 export const dynamic = 'force-dynamic'
 
-// GET /api/invoices?status=&q= → list with client name, newest first.
+// GET /api/invoices?status=&q= → list with client name, newest first. The page
+// Server-renders this via the shared getInvoicesList(); this route serves the
+// same shape for client-side refresh after a mutation.
 export async function GET(req) {
   const sp = req.nextUrl.searchParams
-  const status = sp.get('status')
-  const q = sp.get('q')?.trim()
-
-  const conditions = []
-  if (status && status !== 'all') conditions.push(eq(invoices.status, status))
-  if (q) conditions.push(or(like(invoices.invoiceNumber, `%${q}%`), like(clients.name, `%${q}%`)))
-  const where = conditions.length ? and(...conditions) : undefined
-
-  const rows = await db
-    .select({
-      id: invoices.id,
-      invoiceNumber: invoices.invoiceNumber,
-      clientId: invoices.clientId,
-      clientName: clients.name,
-      issueDate: invoices.issueDate,
-      status: invoices.status,
-      totalAmount: invoices.totalAmount,
-      amountPaid: invoices.amountPaid,
-      balanceDue: invoices.balanceDue,
-      createdAt: invoices.createdAt,
-    })
-    .from(invoices)
-    .leftJoin(clients, eq(invoices.clientId, clients.id))
-    .where(where)
-    .orderBy(desc(invoices.createdAt))
-
+  const rows = await getInvoicesList({ status: sp.get('status'), q: sp.get('q')?.trim() })
   return NextResponse.json(rows)
 }
 
@@ -77,10 +55,10 @@ export async function POST(req) {
 
   const status = body.status === 'sent' ? 'sent' : 'draft'
   const taxRate = Number(body.taxRate) || 0
-  const computed = items.map((it) => ({ ...it, lineTotal: it.quantity * it.unitPrice }))
-  const subtotal = computed.reduce((s, it) => s + it.lineTotal, 0)
-  const taxAmount = subtotal * (taxRate / 100)
-  const totalAmount = subtotal + taxAmount
+  const computed = items.map((it) => ({ ...it, lineTotal: round2(it.quantity * it.unitPrice) }))
+  const subtotal = round2(computed.reduce((s, it) => s + it.lineTotal, 0))
+  const taxAmount = round2(subtotal * (taxRate / 100))
+  const totalAmount = round2(subtotal + taxAmount)
   const now = nowISO()
 
   const created = await db.transaction(async (tx) => {

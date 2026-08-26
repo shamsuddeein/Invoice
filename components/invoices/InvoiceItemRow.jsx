@@ -2,12 +2,12 @@
 
 import Input from '@/components/ui/Input'
 import { TrashIcon } from '@/components/ui/icons'
-import { formatNaira } from '@/lib/utils'
+import { formatNaira, round2 } from '@/lib/utils'
 
 // One editable line item. Description is free text; qty and unit price are mono
 // numeric; the line total is derived (read-only) and right-aligned (UI Rule 6).
 export default function InvoiceItemRow({ item, index, onChange, onRemove, canRemove }) {
-  const lineTotal = (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0)
+  const lineTotal = round2((Number(item.quantity) || 0) * (Number(item.unitPrice) || 0))
 
   function set(field, value) {
     onChange(index, { ...item, [field]: value })

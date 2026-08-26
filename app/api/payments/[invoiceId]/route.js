@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { eq, asc } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { payments, invoices, business } from '@/lib/schema'
-import { generateDocNumber, nowISO, todayISO } from '@/lib/utils'
+import { generateDocNumber, nowISO, todayISO, round2 } from '@/lib/utils'
 import { PAYMENT_METHODS } from '@/lib/constants'
 
 // Live data on every request — never statically cache this GET at build time.
@@ -32,7 +32,7 @@ export async function POST(req, { params }) {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 })
   }
 
-  const amount = Number(body.amountPaid)
+  const amount = round2(body.amountPaid)
   if (!amount || amount <= 0) {
     return NextResponse.json({ error: 'Enter a payment amount greater than zero.' }, { status: 400 })
   }
@@ -50,7 +50,7 @@ export async function POST(req, { params }) {
   }
 
   const alreadyPaid = invoice.amountPaid || 0
-  const balance = (invoice.totalAmount || 0) - alreadyPaid
+  const balance = round2((invoice.totalAmount || 0) - alreadyPaid)
   // Allow a tiny rounding tolerance; otherwise reject overpayment.
   if (amount > balance + 0.01) {
     return NextResponse.json(
@@ -59,8 +59,8 @@ export async function POST(req, { params }) {
     )
   }
 
-  const newAmountPaid = alreadyPaid + amount
-  const rawBalance = (invoice.totalAmount || 0) - newAmountPaid
+  const newAmountPaid = round2(alreadyPaid + amount)
+  const rawBalance = round2((invoice.totalAmount || 0) - newAmountPaid)
   const newBalance = rawBalance < 0.01 ? 0 : rawBalance
   const newStatus = newBalance <= 0.01 ? 'paid' : 'partially_paid'
   const now = nowISO()

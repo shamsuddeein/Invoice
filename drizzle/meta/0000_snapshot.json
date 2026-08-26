@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "41204214-b185-4e40-829b-cf331ac0fe14",
+  "id": "cac27f56-81bb-462e-8b6b-9ff75a7966a9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "business": {
@@ -235,7 +235,15 @@
           "default": 0
         }
       },
-      "indexes": {},
+      "indexes": {
+        "invoice_items_invoice_id_idx": {
+          "name": "invoice_items_invoice_id_idx",
+          "columns": [
+            "invoice_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "invoice_items_invoice_id_invoices_id_fk": {
           "name": "invoice_items_invoice_id_invoices_id_fk",
@@ -378,6 +386,27 @@
             "invoice_number"
           ],
           "isUnique": true
+        },
+        "invoices_client_id_idx": {
+          "name": "invoices_client_id_idx",
+          "columns": [
+            "client_id"
+          ],
+          "isUnique": false
+        },
+        "invoices_status_idx": {
+          "name": "invoices_status_idx",
+          "columns": [
+            "status"
+          ],
+          "isUnique": false
+        },
+        "invoices_created_at_idx": {
+          "name": "invoices_created_at_idx",
+          "columns": [
+            "created_at"
+          ],
+          "isUnique": false
         }
       },
       "foreignKeys": {
@@ -474,6 +503,20 @@
             "receipt_number"
           ],
           "isUnique": true
+        },
+        "payments_invoice_id_idx": {
+          "name": "payments_invoice_id_idx",
+          "columns": [
+            "invoice_id"
+          ],
+          "isUnique": false
+        },
+        "payments_payment_date_idx": {
+          "name": "payments_payment_date_idx",
+          "columns": [
+            "payment_date"
+          ],
+          "isUnique": false
         }
       },
       "foreignKeys": {
