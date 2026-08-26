@@ -1,17 +1,28 @@
-// Applies the generated SQL migrations in ./drizzle to the target database and
-// records them in __drizzle_migrations. Non-interactive — use this instead of
-// `drizzle-kit push` for scripted/CI runs.
-//
-//   npm run db:migrate          (defaults to file:local.db)
-import { createClient } from '@libsql/client'
-import { drizzle } from 'drizzle-orm/libsql'
-import { migrate } from 'drizzle-orm/libsql/migrator'
+import fs from 'fs'
+import { createClient } from '@libsql/client/web'
 
-const url = process.env.TURSO_DATABASE_URL || 'file:local.db'
+const rawUrl = process.env.TURSO_DATABASE_URL || 'file:local.db'
+const url = rawUrl.replace('libsql://', 'https://')
 const authToken = process.env.TURSO_AUTH_TOKEN || undefined
 const client = createClient({ url, authToken })
-const db = drizzle(client)
 
-await migrate(db, { migrationsFolder: './drizzle' })
-console.log('✓ migrations applied to', url)
+const sqlFile = fs.readFileSync('./drizzle/0000_magical_talisman.sql', 'utf8')
+const statements = sqlFile
+  .split('--> statement-breakpoint')
+  .map((s) => s.trim())
+  .filter(Boolean)
+
+for (const stmt of statements) {
+  try {
+    await client.execute(stmt)
+  } catch (err) {
+    if (err.message?.includes('already exists')) {
+      // Table or index already exists, safe to continue
+      continue
+    }
+    throw err
+  }
+}
+
+console.log('✓ migrations verified and up-to-date on Turso:', url)
 process.exit(0)

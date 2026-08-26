@@ -13,17 +13,17 @@
     "db:seed": "node scripts/seed.mjs"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.4",
+    "@react-pdf/renderer": "^3.4.4",
+    "autoprefixer": "^10.4.20",
+    "drizzle-orm": "^0.30.10",
+    "html2canvas": "^1.4.1",
     "next": "14.2.15",
+    "next-auth": "^5.0.0-beta.22",
+    "postcss": "^8.4.41",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "@libsql/client": "^0.6.2",
-    "drizzle-orm": "^0.30.10",
-    "next-auth": "^5.0.0-beta.22",
-    "@react-pdf/renderer": "^3.4.4",
-    "html2canvas": "^1.4.1",
-    "tailwindcss": "^3.4.4",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.41"
+    "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
     "drizzle-kit": "^0.21.4",
