@@ -177,9 +177,6 @@ export default function InvoicePreviewPDF({ business = {}, invoice }) {
         {/* Footer */}
         <View style={s.footer}>
           <Text style={s.footerThanks}>Thank you for your business.</Text>
-          {business.phone || business.email ? (
-            <Text style={s.footerMeta}>{[business.phone, business.email].filter(Boolean).join('   ·   ')}</Text>
-          ) : null}
         </View>
       </Page>
     </Document>

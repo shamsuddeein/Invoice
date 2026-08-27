@@ -146,11 +146,6 @@ export default function InvoicePreview({ business = {}, invoice }) {
         {/* Footer */}
         <div style={{ marginTop: 30, paddingTop: 16, borderTop: `1px solid ${DOC.line}`, textAlign: 'center' }}>
           <div style={{ fontSize: 12.5, fontWeight: 600, color: DOC.ink }}>Thank you for your business.</div>
-          {(business.phone || business.email) && (
-            <div style={{ marginTop: 4, fontSize: 11, color: DOC.muted }}>
-              {[business.phone, business.email].filter(Boolean).join('  ·  ')}
-            </div>
-          )}
         </div>
       </div>
     </div>
