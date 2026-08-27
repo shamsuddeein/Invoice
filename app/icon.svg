@@ -6,16 +6,13 @@
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="14" fill="url(#tileGrad)" />
-  <g transform="translate(9, 7) scale(0.185)">
-    <!-- Cyan Continuous Arch & "i" Stem -->
-    <path d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
-          fill="none" stroke="#00CCFF" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
-
-    <!-- White Chevron (A) -->
-    <path d="M 36,156 L 86,84 L 136,156"
-          fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
-
-    <!-- Cyan Dot (i) -->
-    <circle cx="123" cy="58" r="14.5" fill="#00CCFF" />
+  <g transform="translate(7, 5) scale(0.165)">
+    <path d="M 36,134 C 36,54 88,24 153,24 C 226,24 284,60 284,130 C 284,170 256,194 218,194"
+          fill="none" stroke="#00CCFF" stroke-width="42" stroke-linecap="round" />
+    <line x1="168" y1="104" x2="218" y2="194"
+          stroke="#00CCFF" stroke-width="42" stroke-linecap="round" />
+    <path d="M 44,178 L 108,90 L 172,178"
+          fill="none" stroke="#ffffff" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="160" cy="68" r="18.5" fill="#00CCFF" />
   </g>
 </svg>

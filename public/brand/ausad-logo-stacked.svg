@@ -1,21 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" width="560" height="560">
-  <!-- Symbol Mark (Top) -->
-  <g transform="translate(15, 12)">
-    <!-- Cyan Continuous Arch & "i" Stem -->
-    <path d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
-          fill="none" stroke="#00CCFF" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 306 306" width="612" height="612">
+  <g id="mark">
+    <!-- Outer Cyan Arch Dome -->
+    <path d="M 36,134 C 36,54 88,24 153,24 C 226,24 284,60 284,130 C 284,170 256,194 218,194"
+          fill="none" stroke="#00CCFF" stroke-width="40" stroke-linecap="round" />
+
+    <!-- Cyan Diagonal Pill (i stem) -->
+    <line x1="168" y1="104" x2="218" y2="194"
+          stroke="#00CCFF" stroke-width="40" stroke-linecap="round" />
 
     <!-- Royal Blue Chevron (A) -->
-    <path d="M 36,156 L 86,84 L 136,156"
-          fill="none" stroke="#003399" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 44,178 L 108,90 L 172,178"
+          fill="none" stroke="#003399" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
 
-    <!-- Royal Blue Dot (i) -->
-    <circle cx="123" cy="58" r="13.5" fill="#003399" />
+    <!-- Royal Blue Dot (i head) -->
+    <circle cx="160" cy="68" r="17.5" fill="#003399" />
   </g>
 
   <!-- AUSAD Wordmark -->
-  <text x="140" y="222" text-anchor="middle" font-family="'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="900" letter-spacing="2" fill="#003399">AUSAD</text>
+  <text x="153" y="248" text-anchor="middle" font-family="'DM Sans', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="58" font-weight="900" letter-spacing="0" fill="#003399">AUSAD</text>
 
   <!-- Innovation Limited Subtitle -->
-  <text x="140" y="254" text-anchor="middle" font-family="'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="19" font-weight="600" letter-spacing="0.5" fill="#00CCFF">Innovation Limited</text>
+  <text x="153" y="284" text-anchor="middle" font-family="'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="24.5" font-weight="700" letter-spacing="0.1" fill="#00CCFF">Innovation Limited</text>
 </svg>
