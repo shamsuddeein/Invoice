@@ -69,7 +69,6 @@ export default function InvoicePreviewPDF({ business = {}, invoice }) {
         <View style={s.headRow}>
           <View style={{ maxWidth: 300 }}>
             {business.logo ? <Image src={business.logo} style={s.logo} /> : <BrandLogoPDF />}
-            <Text style={s.bizName}>{business.name || 'Your Business'}</Text>
             <View style={s.bizMeta}>
               {business.address ? <Text>{business.address}</Text> : null}
               {business.phone ? <Text style={s.mono}>{business.phone}</Text> : null}

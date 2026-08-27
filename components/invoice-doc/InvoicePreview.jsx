@@ -32,14 +32,11 @@ export default function InvoicePreview({ business = {}, invoice }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24 }}>
           <div style={{ maxWidth: 360 }}>
             {business.logo ? (
-              <img src={business.logo} alt="" style={{ maxHeight: 48, maxWidth: 200, objectFit: 'contain', display: 'block', marginBottom: 12 }} />
+              <img src={business.logo} alt="" style={{ maxHeight: 48, maxWidth: 200, objectFit: 'contain', display: 'block', marginBottom: 10 }} />
             ) : (
-              <BrandLogo variant="horizontal" height={44} style={{ display: 'block', marginBottom: 12 }} />
+              <BrandLogo variant="horizontal" height={44} style={{ display: 'block', marginBottom: 10 }} />
             )}
-            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: 0.2, color: DOC.ink }}>
-              {business.name || 'Your Business'}
-            </div>
-            <div style={{ marginTop: 6, fontSize: 12, color: DOC.muted, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 12, color: DOC.muted, lineHeight: 1.6 }}>
               {business.address && <div style={{ whiteSpace: 'pre-line' }}>{business.address}</div>}
               {business.phone && <div style={num}>{business.phone}</div>}
               {business.email && <div>{business.email}</div>}
