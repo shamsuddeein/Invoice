@@ -1,22 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <defs>
     <linearGradient id="tileGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00C4FE" />
-      <stop offset="50%" stop-color="#07338C" />
-      <stop offset="100%" stop-color="#030E40" />
+      <stop offset="0%" stop-color="#002D88" />
+      <stop offset="100%" stop-color="#001850" />
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="14" fill="url(#tileGrad)" />
-  <g transform="translate(7, 6) scale(0.50)">
-    <!-- White Arch Dome -->
-    <path d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
-          fill="none" stroke="#ffffff" stroke-width="11.5" stroke-linecap="round" stroke-linejoin="round" />
+  <g transform="translate(9, 7) scale(0.185)">
+    <!-- Cyan Continuous Arch & "i" Stem -->
+    <path d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
+          fill="none" stroke="#00CCFF" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
 
-    <!-- White Chevron "A" -->
-    <path d="M 21,68 L 43,36 L 65,68"
-          fill="none" stroke="#ffffff" stroke-width="11.5" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- White Chevron (A) -->
+    <path d="M 36,156 L 86,84 L 136,156"
+          fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
 
-    <!-- White Dot (head of "i") -->
-    <circle cx="59.5" cy="25" r="6.6" fill="#ffffff" />
+    <!-- Cyan Dot (i) -->
+    <circle cx="123" cy="58" r="14.5" fill="#00CCFF" />
   </g>
 </svg>

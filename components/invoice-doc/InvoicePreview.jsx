@@ -34,7 +34,7 @@ export default function InvoicePreview({ business = {}, invoice }) {
             {business.logo ? (
               <img src={business.logo} alt="" style={{ maxHeight: 48, maxWidth: 200, objectFit: 'contain', display: 'block', marginBottom: 12 }} />
             ) : (
-              <BrandLogo variant="full" height={46} style={{ display: 'block', marginBottom: 12 }} />
+              <BrandLogo variant="horizontal" height={44} style={{ display: 'block', marginBottom: 12 }} />
             )}
             <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: 0.2, color: DOC.ink }}>
               {business.name || 'Your Business'}

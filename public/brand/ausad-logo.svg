@@ -1,35 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 84" width="640" height="168">
-  <defs>
-    <linearGradient id="ausadBadgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00C4FE" />
-      <stop offset="55%" stop-color="#062270" />
-      <stop offset="100%" stop-color="#02092E" />
-    </linearGradient>
-    <linearGradient id="ausadTileGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00C4FE" />
-      <stop offset="50%" stop-color="#07338C" />
-      <stop offset="100%" stop-color="#030E40" />
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="640" height="160">
+  <!-- Symbol Mark (Left) -->
+  <g transform="translate(6, 6) scale(0.35)">
+    <!-- Cyan Continuous Arch & "i" Stem -->
+    <path d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
+          fill="none" stroke="#00CCFF" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
 
-  <!-- AUSAD Ai Symbol Mark (Left) -->
-  <g transform="translate(2, 4)">
-    <!-- Cyan Arch Dome -->
-    <path d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
-          fill="none" stroke="#00C4FE" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+    <!-- Royal Blue Chevron (A) -->
+    <path d="M 36,156 L 86,84 L 136,156"
+          fill="none" stroke="#003399" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
 
-    <!-- Navy Chevron "A" -->
-    <path d="M 21,68 L 43,36 L 65,68"
-          fill="none" stroke="#06155E" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
-
-    <!-- Navy Dot (head of "i") -->
-    <circle cx="59.5" cy="25" r="6.2" fill="#06155E" />
+    <!-- Royal Blue Dot (i) -->
+    <circle cx="123" cy="58" r="13.5" fill="#003399" />
   </g>
 
-  <!-- AUSAD Wordmark -->
-  <text x="116" y="47" font-family="'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Arial Black', sans-serif" font-size="49" font-weight="900" letter-spacing="1" fill="#06155E">AUSAD</text>
-
-  <!-- Innovation Limited Badge -->
-  <rect x="104" y="55" width="208" height="23.5" rx="4" fill="url(#ausadBadgeGrad)" />
-  <text x="208" y="72" text-anchor="middle" font-family="'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13.5" font-weight="700" letter-spacing="0.4" fill="#ffffff">Innovation Limited</text>
+  <!-- Text Group (Right) -->
+  <text x="102" y="44" font-family="'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="38" font-weight="900" letter-spacing="1" fill="#003399">AUSAD</text>
+  <text x="103" y="66" font-family="'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14.5" font-weight="600" letter-spacing="0.3" fill="#00B4D8">Innovation Limited</text>
 </svg>

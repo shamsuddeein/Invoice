@@ -33,7 +33,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-base px-4">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-6">
-          <BrandLogo variant="full" height={46} className="mb-4" />
+          <BrandLogo variant="stacked" height={110} className="mb-4" />
           <h1 className="t-h2">Welcome back</h1>
           <p className="t-secondary text-sm mt-1">Sign in to manage your invoices</p>
         </div>

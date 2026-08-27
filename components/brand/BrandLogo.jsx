@@ -7,16 +7,14 @@ import { useId } from 'react'
 // screen densities, login pages, app shell navigation, and document previews.
 //
 // Variants:
-//   • 'full'  — Complete horizontal lockup (Ai symbol mark + "AUSAD" wordmark + "Innovation Limited" badge).
-//   • 'mark'  — The standalone symbol mark (cyan arch/stem + navy chevron + navy dot).
-//   • 'tile'  — The symbol mark in white on a rounded gradient tile (for sidebar & mobile headers).
+//   • 'full' / 'stacked'  — Vertical/stacked lockup (Ai symbol mark on top + "AUSAD" in royal blue + "Innovation Limited" in cyan).
+//   • 'horizontal'        — Horizontal lockup (Ai symbol mark on left + "AUSAD" & "Innovation Limited" on right).
+//   • 'mark'              — The standalone symbol mark (cyan arch/stem + royal blue chevron + dot).
+//   • 'tile'              — The symbol mark on a rounded royal blue tile (for sidebar & mobile headers).
 
-const CYAN = '#00C4FE'
-const NAVY = '#06155E'
-const GRAD_MID = '#062270'
-const GRAD_END = '#02092E'
-const TILE_MID = '#07338C'
-const TILE_END = '#030E40'
+const CYAN = '#00CCFF'
+const CYAN_TEXT = '#00B4D8'
+const BLUE = '#003399'
 
 export default function BrandLogo({
   variant = 'full',
@@ -26,7 +24,6 @@ export default function BrandLogo({
   title = 'AUSAD Innovation Limited',
 }) {
   const uid = useId().replace(/:/g, '')
-  const badgeGid = `ausadBadgeGrad-${uid}`
   const tileGid = `ausadTileGrad-${uid}`
 
   if (variant === 'tile') {
@@ -44,33 +41,32 @@ export default function BrandLogo({
       >
         <defs>
           <linearGradient id={tileGid} x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={CYAN} />
-            <stop offset="50%" stopColor={TILE_MID} />
-            <stop offset="100%" stopColor={TILE_END} />
+            <stop offset="0%" stopColor="#002D88" />
+            <stop offset="100%" stopColor="#001850" />
           </linearGradient>
         </defs>
         <rect width="64" height="64" rx="14" fill={`url(#${tileGid})`} />
-        <g transform="translate(7, 6) scale(0.50)">
-          {/* White Arch & i-stem */}
+        <g transform="translate(9, 7) scale(0.185)">
+          {/* Cyan Continuous Arch & i-stem */}
           <path
-            d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
+            d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
             fill="none"
-            stroke="#ffffff"
-            strokeWidth="11.5"
+            stroke={CYAN}
+            strokeWidth="26"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
           {/* White Chevron (A) */}
           <path
-            d="M 21,68 L 43,36 L 65,68"
+            d="M 36,156 L 86,84 L 136,156"
             fill="none"
             stroke="#ffffff"
-            strokeWidth="11.5"
+            strokeWidth="26"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          {/* White Dot (i) */}
-          <circle cx="59.5" cy="25" r="6.6" fill="#ffffff" />
+          {/* Cyan Dot (i) */}
+          <circle cx="123" cy="58" r="14.5" fill={CYAN} />
         </g>
       </svg>
     )
@@ -89,100 +85,145 @@ export default function BrandLogo({
         className={className}
         style={style}
       >
-        <g transform="translate(-3, 10)">
-          {/* Cyan Arch & i-stem */}
+        <g transform="translate(2, 6) scale(0.38)">
           <path
-            d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
+            d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
             fill="none"
             stroke={CYAN}
-            strokeWidth="11"
+            strokeWidth="24"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          {/* Navy Chevron (A) */}
           <path
-            d="M 21,68 L 43,36 L 65,68"
+            d="M 36,156 L 86,84 L 136,156"
             fill="none"
-            stroke={NAVY}
-            strokeWidth="11"
+            stroke={BLUE}
+            strokeWidth="24"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          {/* Navy Dot (i) */}
-          <circle cx="59.5" cy="25" r="6.2" fill={NAVY} />
+          <circle cx="123" cy="58" r="13.5" fill={BLUE} />
         </g>
       </svg>
     )
   }
 
-  // Full horizontal lockup (default)
-  const h = height ?? 44
+  if (variant === 'horizontal') {
+    const h = height ?? 44
+    return (
+      <svg
+        role="img"
+        aria-label={title}
+        height={h}
+        viewBox="0 0 320 80"
+        xmlns="http://www.w3.org/2000/svg"
+        className={className}
+        style={{ display: 'inline-block', verticalAlign: 'middle', maxWidth: '100%', ...style }}
+      >
+        <g transform="translate(6, 6) scale(0.35)">
+          <path
+            d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
+            fill="none"
+            stroke={CYAN}
+            strokeWidth="24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M 36,156 L 86,84 L 136,156"
+            fill="none"
+            stroke={BLUE}
+            strokeWidth="24"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="123" cy="58" r="13.5" fill={BLUE} />
+        </g>
+        <text
+          x="102"
+          y="44"
+          fontFamily="var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, sans-serif"
+          fontSize="38"
+          fontWeight="900"
+          letterSpacing="1"
+          fill={BLUE}
+        >
+          AUSAD
+        </text>
+        <text
+          x="103"
+          y="66"
+          fontFamily="var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, sans-serif"
+          fontSize="14.5"
+          fontWeight="600"
+          letterSpacing="0.3"
+          fill={CYAN_TEXT}
+        >
+          Innovation Limited
+        </text>
+      </svg>
+    )
+  }
+
+  // Full Stacked lockup (default)
+  const h = height ?? 80
   return (
     <svg
       role="img"
       aria-label={title}
       height={h}
-      viewBox="0 0 320 84"
+      viewBox="0 0 280 280"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       style={{ display: 'inline-block', verticalAlign: 'middle', maxWidth: '100%', ...style }}
     >
-      <defs>
-        <linearGradient id={badgeGid} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor={CYAN} />
-          <stop offset="55%" stopColor={GRAD_MID} />
-          <stop offset="100%" stopColor={GRAD_END} />
-        </linearGradient>
-      </defs>
-
-      {/* Ai Symbol Mark */}
-      <g transform="translate(2, 4)">
-        {/* Cyan Arch & i-stem */}
+      <g transform="translate(15, 12)">
+        {/* Cyan Continuous Arch & i-stem */}
         <path
-          d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
+          d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
           fill="none"
           stroke={CYAN}
-          strokeWidth="11"
+          strokeWidth="24"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        {/* Navy Chevron (A) */}
+        {/* Royal Blue Chevron (A) */}
         <path
-          d="M 21,68 L 43,36 L 65,68"
+          d="M 36,156 L 86,84 L 136,156"
           fill="none"
-          stroke={NAVY}
-          strokeWidth="11"
+          stroke={BLUE}
+          strokeWidth="24"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        {/* Navy Dot (i) */}
-        <circle cx="59.5" cy="25" r="6.2" fill={NAVY} />
+        {/* Royal Blue Dot (i) */}
+        <circle cx="123" cy="58" r="13.5" fill={BLUE} />
       </g>
 
       {/* AUSAD Wordmark */}
       <text
-        x="116"
-        y="47"
+        x="140"
+        y="222"
+        textAnchor="middle"
         fontFamily="var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-        fontSize="49"
+        fontSize="44"
         fontWeight="900"
-        letterSpacing="1"
-        fill={NAVY}
+        letterSpacing="2"
+        fill={BLUE}
       >
         AUSAD
       </text>
 
-      {/* Innovation Limited Badge */}
-      <rect x="104" y="55" width="208" height="23.5" rx="4" fill={`url(#${badgeGid})`} />
+      {/* Innovation Limited Subtitle */}
       <text
-        x="208"
-        y="72"
+        x="140"
+        y="254"
         textAnchor="middle"
         fontFamily="var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-        fontSize="13.5"
-        fontWeight="700"
-        letterSpacing="0.4"
-        fill="#ffffff"
+        fontSize="19"
+        fontWeight="600"
+        letterSpacing="0.5"
+        fill={CYAN_TEXT}
       >
         Innovation Limited
       </text>

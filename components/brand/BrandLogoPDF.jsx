@@ -1,51 +1,40 @@
 import { View, Text, Svg, Path, Circle } from '@react-pdf/renderer'
 
 // react-pdf rendering of the AUSAD brand lockup — the DEFAULT logo on invoice &
-// receipt PDFs when no custom logo is uploaded. Drawn with native vector primitives
-// for crisp PDF rasterization and vector printing.
-const CYAN = '#00C4FE'
-const NAVY = '#06155E'
+// receipt PDFs when no custom logo is uploaded.
+const CYAN = '#00CCFF'
+const CYAN_TEXT = '#00B4D8'
+const BLUE = '#003399'
 
 export default function BrandLogoPDF() {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-      <Svg width={36} height={36} viewBox="0 0 100 100">
+      <Svg width={38} height={38} viewBox="0 0 100 100">
         <Path
-          d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
+          d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
           stroke={CYAN}
-          strokeWidth={11}
+          strokeWidth={24}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <Path
-          d="M 21,68 L 43,36 L 65,68"
-          stroke={NAVY}
-          strokeWidth={11}
+          d="M 36,156 L 86,84 L 136,156"
+          stroke={BLUE}
+          strokeWidth={24}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <Circle cx={59.5} cy={25} r={6.2} fill={NAVY} />
+        <Circle cx={123} cy={58} r={13.5} fill={BLUE} />
       </Svg>
-      <View style={{ marginLeft: 6 }}>
-        <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: 18, color: NAVY, letterSpacing: 0.8 }}>
+      <View style={{ marginLeft: 8 }}>
+        <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: 18, color: BLUE, letterSpacing: 0.8 }}>
           AUSAD
         </Text>
-        <View
-          style={{
-            marginTop: 2,
-            backgroundColor: NAVY,
-            borderRadius: 3,
-            paddingVertical: 2,
-            paddingHorizontal: 6,
-            alignSelf: 'flex-start',
-          }}
-        >
-          <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: 6.5, color: '#FFFFFF', letterSpacing: 0.4 }}>
-            Innovation Limited
-          </Text>
-        </View>
+        <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: 7.5, color: CYAN_TEXT, letterSpacing: 0.3, marginTop: 1 }}>
+          Innovation Limited
+        </Text>
       </View>
     </View>
   )

@@ -201,7 +201,7 @@ export default function SettingsPage() {
                   />
                 ) : (
                   <div className="h-16 rounded-lg border border-border bg-white flex items-center px-3">
-                    <BrandLogo variant="full" height={30} />
+                    <BrandLogo variant="horizontal" height={36} />
                   </div>
                 )}
                 <div className="flex items-center gap-2">

@@ -129,9 +129,6 @@ export default function ReceiptPreviewPDF({ business = {}, invoice, payment }) {
         {/* Footer */}
         <View style={s.footer}>
           <Text style={s.footerThanks}>Thank you for your payment.</Text>
-          {business.phone || business.email ? (
-            <Text style={s.footerMeta}>{[business.phone, business.email].filter(Boolean).join('   ·   ')}</Text>
-          ) : null}
         </View>
       </Page>
     </Document>
