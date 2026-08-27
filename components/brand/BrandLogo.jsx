@@ -2,25 +2,21 @@
 
 import { useId } from 'react'
 
-// AUSAD Innovation Limited brand logo, recreated as vector art so it renders
-// crisply everywhere — app chrome, login, and (as the default) on invoices &
-// receipts — with no image asset to ship. Inline SVG so html2canvas reproduces it
-// faithfully in the "Save Image" / Print capture. Variants:
-//   • 'mark'  — the bare gradient arc-and-dot icon (composed into 'full')
-//   • 'tile'  — the mark on a rounded gradient tile, drawn in white (chrome tiles)
-//   • 'full'  — mark + "AUSAD" wordmark + "Innovation Limited" pill (login, documents)
+// Official AUSAD Innovation Limited brand logo component.
+// Recreated with crisp vector SVG geometry so it renders razor-sharp across all
+// screen densities, login pages, app shell navigation, and document previews.
 //
-// A logo uploaded in Settings overrides this default at the document render sites;
-// removing it reverts to this ("absence = default"). Kept as the single source of
-// brand geometry — the same arc path is mirrored in BrandLogoPDF and app/icon.svg.
-const CYAN = '#22D3EE'
-const BLUE = '#2563EB'
-const NAVY = '#1E3A8A'
-const FONT = "'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif"
+// Variants:
+//   • 'full'  — Complete horizontal lockup (Ai symbol mark + "AUSAD" wordmark + "Innovation Limited" badge).
+//   • 'mark'  — The standalone symbol mark (cyan arch/stem + navy chevron + navy dot).
+//   • 'tile'  — The symbol mark in white on a rounded gradient tile (for sidebar & mobile headers).
 
-// Swoosh drawn as a cubic bézier (universally supported — no elliptical-arc command)
-// inside a 48×48 box, so DOM and react-pdf render an identical shape.
-const MARK_PATH = 'M6 39 C 11 20 27 12 41 15'
+const CYAN = '#00C4FE'
+const NAVY = '#06155E'
+const GRAD_MID = '#062270'
+const GRAD_END = '#02092E'
+const TILE_MID = '#07338C'
+const TILE_END = '#030E40'
 
 export default function BrandLogo({
   variant = 'full',
@@ -30,72 +26,162 @@ export default function BrandLogo({
   title = 'AUSAD Innovation Limited',
 }) {
   const uid = useId().replace(/:/g, '')
-  const gid = `ausadGrad-${uid}`
+  const badgeGid = `ausadBadgeGrad-${uid}`
+  const tileGid = `ausadTileGrad-${uid}`
 
-  const grad = (
-    <linearGradient id={gid} x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0" stopColor={CYAN} />
-      <stop offset="0.55" stopColor={BLUE} />
-      <stop offset="1" stopColor={NAVY} />
-    </linearGradient>
-  )
-
-  // Arc + dot; colours swap for on-light (gradient arc, navy dot) vs on-dark
-  // (white arc + dot, used on the gradient tile).
-  const mark = (arcStroke, dotFill) => (
-    <>
-      <path d={MARK_PATH} fill="none" stroke={arcStroke} strokeWidth="7" strokeLinecap="round" />
-      <circle cx="41" cy="11" r="4.6" fill={dotFill} />
-    </>
-  )
-
-  if (variant === 'tile' || variant === 'mark') {
+  if (variant === 'tile') {
     const h = height ?? 32
-    const onTile = variant === 'tile'
     return (
       <svg
         role="img"
         aria-label={title}
         width={h}
         height={h}
-        viewBox="0 0 48 48"
+        viewBox="0 0 64 64"
         xmlns="http://www.w3.org/2000/svg"
         className={className}
         style={style}
       >
-        <defs>{grad}</defs>
-        {onTile && <rect width="48" height="48" rx="12" fill={`url(#${gid})`} />}
-        {onTile ? mark('#ffffff', '#ffffff') : mark(`url(#${gid})`, NAVY)}
+        <defs>
+          <linearGradient id={tileGid} x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={CYAN} />
+            <stop offset="50%" stopColor={TILE_MID} />
+            <stop offset="100%" stopColor={TILE_END} />
+          </linearGradient>
+        </defs>
+        <rect width="64" height="64" rx="14" fill={`url(#${tileGid})`} />
+        <g transform="translate(7, 6) scale(0.50)">
+          {/* White Arch & i-stem */}
+          <path
+            d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="11.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* White Chevron (A) */}
+          <path
+            d="M 21,68 L 43,36 L 65,68"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="11.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* White Dot (i) */}
+          <circle cx="59.5" cy="25" r="6.6" fill="#ffffff" />
+        </g>
       </svg>
     )
   }
 
-  // Full horizontal lockup.
-  const h = height ?? 40
+  if (variant === 'mark') {
+    const h = height ?? 36
+    return (
+      <svg
+        role="img"
+        aria-label={title}
+        width={h}
+        height={h}
+        viewBox="0 0 100 100"
+        xmlns="http://www.w3.org/2000/svg"
+        className={className}
+        style={style}
+      >
+        <g transform="translate(-3, 10)">
+          {/* Cyan Arch & i-stem */}
+          <path
+            d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
+            fill="none"
+            stroke={CYAN}
+            strokeWidth="11"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* Navy Chevron (A) */}
+          <path
+            d="M 21,68 L 43,36 L 65,68"
+            fill="none"
+            stroke={NAVY}
+            strokeWidth="11"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* Navy Dot (i) */}
+          <circle cx="59.5" cy="25" r="6.2" fill={NAVY} />
+        </g>
+      </svg>
+    )
+  }
+
+  // Full horizontal lockup (default)
+  const h = height ?? 44
   return (
     <svg
       role="img"
       aria-label={title}
       height={h}
-      viewBox="0 0 205 64"
+      viewBox="0 0 320 84"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      style={style}
+      style={{ display: 'inline-block', verticalAlign: 'middle', maxWidth: '100%', ...style }}
     >
-      <defs>{grad}</defs>
-      <g transform="translate(0,8)">{mark(`url(#${gid})`, NAVY)}</g>
-      <text x="62" y="33" fontFamily={FONT} fontSize="29" fontWeight="800" letterSpacing="0.5" fill={NAVY}>
+      <defs>
+        <linearGradient id={badgeGid} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor={CYAN} />
+          <stop offset="55%" stopColor={GRAD_MID} />
+          <stop offset="100%" stopColor={GRAD_END} />
+        </linearGradient>
+      </defs>
+
+      {/* Ai Symbol Mark */}
+      <g transform="translate(2, 4)">
+        {/* Cyan Arch & i-stem */}
+        <path
+          d="M 16,45 C 16,19 36,8 60,8 C 84,8 98,19 98,42 C 98,56 90,66 80,66 C 75,66 71,63 67,58 L 62,50"
+          fill="none"
+          stroke={CYAN}
+          strokeWidth="11"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Navy Chevron (A) */}
+        <path
+          d="M 21,68 L 43,36 L 65,68"
+          fill="none"
+          stroke={NAVY}
+          strokeWidth="11"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Navy Dot (i) */}
+        <circle cx="59.5" cy="25" r="6.2" fill={NAVY} />
+      </g>
+
+      {/* AUSAD Wordmark */}
+      <text
+        x="116"
+        y="47"
+        fontFamily="var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        fontSize="49"
+        fontWeight="900"
+        letterSpacing="1"
+        fill={NAVY}
+      >
         AUSAD
       </text>
-      <rect x="62" y="41" width="132" height="19" rx="9.5" fill={NAVY} />
+
+      {/* Innovation Limited Badge */}
+      <rect x="104" y="55" width="208" height="23.5" rx="4" fill={`url(#${badgeGid})`} />
       <text
-        x="128"
-        y="54.4"
+        x="208"
+        y="72"
         textAnchor="middle"
-        fontFamily={FONT}
-        fontSize="11"
-        fontWeight="600"
-        letterSpacing="0.3"
+        fontFamily="var(--font-dm-sans), 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        fontSize="13.5"
+        fontWeight="700"
+        letterSpacing="0.4"
         fill="#ffffff"
       >
         Innovation Limited
