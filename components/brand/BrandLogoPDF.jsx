@@ -1,41 +1,73 @@
-import { View, Text, Svg, Path, Circle } from '@react-pdf/renderer'
+import { View, Text, Svg, Path, Circle, Rect, Defs, LinearGradient, Stop } from '@react-pdf/renderer'
 
-// react-pdf rendering of the AUSAD brand lockup — the DEFAULT logo on invoice &
-// receipt PDFs when no custom logo is uploaded.
-const CYAN = '#00CCFF'
-const CYAN_TEXT = '#00B4D8'
-const BLUE = '#003399'
+// react-pdf rendering of the AUSAD horizontal brand lockup with gradient badge
+const CYAN = '#00C4FE'
+const NAVY = '#06155E'
 
 export default function BrandLogoPDF() {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-      <Svg width={38} height={38} viewBox="0 0 100 100">
+    <View style={{ marginBottom: 10 }}>
+      <Svg width={180} height={50} viewBox="0 0 280 78">
+        <Defs>
+          <LinearGradient id="pdfInnoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <Stop offset="0%" stopColor={CYAN} />
+            <Stop offset="100%" stopColor={NAVY} />
+          </LinearGradient>
+        </Defs>
+
+        {/* Symbol Mark */}
         <Path
-          d="M 22,106 C 22,48 68,18 125,18 C 182,18 226,48 226,106 C 226,140 206,168 178,168 C 166,168 156,161 146,148 L 136,134"
+          d="M 12,34 C 12,15 24,7 40,7 C 57,7 71,15 71,33 C 71,43 64,49 55,49"
           stroke={CYAN}
-          strokeWidth={24}
+          strokeWidth={9.6}
           fill="none"
           strokeLinecap="round"
-          strokeLinejoin="round"
         />
         <Path
-          d="M 36,156 L 86,84 L 136,156"
-          stroke={BLUE}
-          strokeWidth={24}
+          d="M 43,27 L 55,49"
+          stroke={CYAN}
+          strokeWidth={9.6}
+          fill="none"
+          strokeLinecap="round"
+        />
+        <Path
+          d="M 14,45 L 29,24 L 44,45"
+          stroke={NAVY}
+          strokeWidth={9.6}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <Circle cx={123} cy={58} r={13.5} fill={BLUE} />
-      </Svg>
-      <View style={{ marginLeft: 8 }}>
-        <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: 18, color: BLUE, letterSpacing: 0.8 }}>
+        <Circle cx={41} cy={18} r={4.2} fill={NAVY} />
+
+        {/* Wordmark */}
+        <Text
+          x={88}
+          y={38}
+          style={{
+            fontFamily: 'Helvetica-Bold',
+            fontSize: 44,
+            fill: NAVY,
+          }}
+        >
           AUSAD
         </Text>
-        <Text style={{ fontFamily: 'Helvetica-Bold', fontSize: 7.5, color: CYAN_TEXT, letterSpacing: 0.3, marginTop: 1 }}>
+
+        {/* Gradient Badge */}
+        <Rect x={86} y={47} width={186} height={25} rx={5} fill="url(#pdfInnoGrad)" />
+        <Text
+          x={179}
+          y={64.5}
+          textAnchor="middle"
+          style={{
+            fontFamily: 'Helvetica-Bold',
+            fontSize: 13,
+            fill: '#ffffff',
+          }}
+        >
           Innovation Limited
         </Text>
-      </View>
+      </Svg>
     </View>
   )
 }
