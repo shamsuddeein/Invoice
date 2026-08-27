@@ -1,85 +1,39 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import PageHeader from '@/components/layout/PageHeader'
 import BackLink from '@/components/ui/BackLink'
-import LoadingSpinner from '@/components/ui/LoadingSpinner'
-import InvoiceForm from '@/components/invoices/InvoiceForm'
-import { jsonFetch } from '@/lib/fetcher'
+import EditInvoiceClient from '@/components/invoices/EditInvoiceClient'
+import { getInvoiceById, getClientsList } from '@/lib/queries'
 
-export default function EditInvoicePage({ params }) {
-  const router = useRouter()
-  const { id } = params
+// Live data on every request — never statically cache at build time.
+export const dynamic = 'force-dynamic'
 
-  const [invoice, setInvoice] = useState(null)
-  const [clients, setClients] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [loadError, setLoadError] = useState('')
+// Server Component: the invoice (with its items) and the client list are read
+// server-side and rendered in the first response, so the form is pre-filled with
+// no client fetch waterfall. The EditInvoiceClient island owns only submission.
+export default async function EditInvoicePage({ params }) {
+  const id = Number(params.id)
+  const [invoice, clients] = await Promise.all([getInvoiceById(id), getClientsList()])
 
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    ;(async () => {
-      try {
-        const [inv, c] = await Promise.all([
-          jsonFetch(`/api/invoices/${id}`),
-          jsonFetch('/api/clients'),
-        ])
-        setInvoice(inv)
-        setClients(c)
-        setLoadError('')
-      } catch (e) {
-        setLoadError(e.message)
-      } finally {
-        setLoading(false)
-      }
-    })()
-  }, [id])
-
-  async function handleSubmit(values) {
-    setSubmitting(true)
-    setError('')
-    try {
-      await jsonFetch(`/api/invoices/${id}`, { method: 'PUT', body: JSON.stringify(values) })
-      router.push(`/invoices/${id}`)
-    } catch (e) {
-      setError(e.message)
-      setSubmitting(false)
-    }
+  if (!invoice) {
+    return (
+      <div>
+        <PageHeader title="Edit invoice" breadcrumb={<BackLink href="/invoices">Back to invoices</BackLink>} />
+        <div
+          className="text-sm text-error"
+          style={{ background: 'var(--error-muted)', padding: '10px 14px', borderRadius: 'var(--r-md)' }}
+        >
+          Invoice not found.
+        </div>
+      </div>
+    )
   }
 
   return (
     <div>
       <PageHeader
-        title={invoice ? `Edit ${invoice.invoiceNumber}` : 'Edit invoice'}
+        title={`Edit ${invoice.invoiceNumber}`}
         breadcrumb={<BackLink href={`/invoices/${id}`}>Back to invoice</BackLink>}
       />
-
-      {loading ? (
-        <div className="flex justify-center py-24 text-text-muted">
-          <LoadingSpinner size={24} />
-        </div>
-      ) : loadError ? (
-        <div
-          className="text-sm text-error"
-          style={{ background: 'var(--error-muted)', padding: '10px 14px', borderRadius: 'var(--r-md)' }}
-        >
-          {loadError}
-        </div>
-      ) : (
-        <InvoiceForm
-          clients={clients}
-          initial={invoice}
-          defaultTaxRate={invoice?.taxRate ?? 0}
-          mode="edit"
-          onSubmit={handleSubmit}
-          onCancel={() => router.push(`/invoices/${id}`)}
-          submitting={submitting}
-          error={error}
-        />
-      )}
+      <EditInvoiceClient id={id} initialInvoice={invoice} clients={clients} />
     </div>
   )
 }

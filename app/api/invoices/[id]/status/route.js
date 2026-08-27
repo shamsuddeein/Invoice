@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { invoices } from '@/lib/schema'
 import { nowISO } from '@/lib/utils'
+import { requireAuth } from '@/lib/guard'
 
 // Live data on every request — never statically cache at build time.
 export const dynamic = 'force-dynamic'
@@ -11,6 +12,8 @@ export const dynamic = 'force-dynamic'
 // Paid / partially_paid are driven by recorded payments, so they can't be set
 // by hand here.
 export async function PATCH(req, { params }) {
+  const denied = await requireAuth()
+  if (denied) return denied
   const id = Number(params.id)
   let body
   try {

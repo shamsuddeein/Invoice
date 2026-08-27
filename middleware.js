@@ -1,4 +1,10 @@
-import { auth } from '@/lib/auth'
+import NextAuth from 'next-auth'
+import { authConfig } from '@/auth.config'
+
+// Edge-safe: middleware runs on the edge runtime, so it uses the provider-less,
+// DB-free authConfig — NOT lib/auth.js, which imports the libSQL client. The JWT
+// session cookie is all that's needed to gate routes here.
+const { auth } = NextAuth(authConfig)
 
 // Gate every page/API route behind the single-user session. Logged-out users
 // are bounced to /login; logged-in users hitting /login are sent to /dashboard.

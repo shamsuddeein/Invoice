@@ -13,6 +13,7 @@ import InvoiceItemRow from './InvoiceItemRow'
 import InvoiceTotalsPanel from './InvoiceTotalsPanel'
 import useInvoiceCalculator from '@/hooks/useInvoiceCalculator'
 import { jsonFetch } from '@/lib/fetcher'
+import { useToast } from '@/components/ui/Toast'
 import { todayISO } from '@/lib/utils'
 
 const BLANK_ITEM = { description: '', quantity: 1, unitPrice: '' }
@@ -49,6 +50,7 @@ export default function InvoiceForm({
   const [form, setForm] = useState(() => buildInitial(initial, defaultTaxRate))
   const [intent, setIntent] = useState(null) // which button is pending
   const [touched, setTouched] = useState(false)
+  const toast = useToast()
 
   // Clients added inline (via the quick-add modal) are appended to the prop list
   // so the freshly-created client can be selected without leaving this form.
@@ -82,6 +84,7 @@ export default function InvoiceForm({
       setExtraClients((list) => [...list, created])
       setForm((f) => ({ ...f, clientId: String(created.id) }))
       setAddOpen(false)
+      toast.success(`${created.name} added`)
     } catch (e) {
       setAddError(e.message)
     } finally {

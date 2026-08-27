@@ -415,4 +415,24 @@
     background: var(--bg-hover);
     border-radius: var(--r-sm);
   }
+
+  /* ── Toast notification ── */
+  .toast-item {
+    animation: toastIn 0.18s ease-out;
+  }
+  @keyframes toastIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .toast-item {
+      animation: none;
+    }
+  }
 }

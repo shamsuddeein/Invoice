@@ -1,8 +1,9 @@
 import { Document, Page, View, Text, Image, StyleSheet } from '@react-pdf/renderer'
 import { DOC } from './theme'
-import { formatNaira, formatDate } from '@/lib/utils'
+import { formatNaira, formatDate, receiptStanding } from '@/lib/utils'
 import { PAYMENT_METHOD_LABELS } from '@/lib/constants'
 import { registerPdfFonts } from './pdf-fonts'
+import BrandLogoPDF from '@/components/brand/BrandLogoPDF'
 
 // react-pdf mirror of ReceiptPreview — a plain, classic receipt: black ink on white,
 // hairline rules, no header band, no filled boxes. Figures use IBM Plex Mono
@@ -44,7 +45,8 @@ const s = StyleSheet.create({
 
 export default function ReceiptPreviewPDF({ business = {}, invoice, payment }) {
   const client = invoice?.client || {}
-  const paidInFull = (invoice?.balanceDue || 0) <= 0.01
+  // Standing as of THIS payment (see receiptStanding) — never the live balance.
+  const { paidThrough, balanceAsOf, paidInFull } = receiptStanding(invoice, payment)
 
   const detailRows = [
     { label: 'Payment date', value: formatDate(payment?.paymentDate), mono: true },
@@ -59,7 +61,7 @@ export default function ReceiptPreviewPDF({ business = {}, invoice, payment }) {
         {/* Header */}
         <View style={s.headRow}>
           <View style={{ maxWidth: 300 }}>
-            {business.logo ? <Image src={business.logo} style={s.logo} /> : null}
+            {business.logo ? <Image src={business.logo} style={s.logo} /> : <BrandLogoPDF />}
             <Text style={s.bizName}>{business.name || 'Your Business'}</Text>
             <View style={s.bizMeta}>
               {business.address ? <Text>{business.address}</Text> : null}
@@ -113,12 +115,12 @@ export default function ReceiptPreviewPDF({ business = {}, invoice, payment }) {
             </View>
             <View style={s.totRow}>
               <Text style={s.totLabel}>Total paid</Text>
-              <Text style={s.totVal}>{formatNaira(invoice?.amountPaid)}</Text>
+              <Text style={s.totVal}>{formatNaira(paidThrough)}</Text>
             </View>
             <View style={s.grandRow}>
               <Text style={s.grandLabel}>Balance due</Text>
               <Text style={[{ fontSize: 13, fontFamily: 'IBM Plex Mono', fontWeight: 600 }, { color: paidInFull ? DOC.paid : DOC.ink }]}>
-                {formatNaira(invoice?.balanceDue)}
+                {formatNaira(balanceAsOf)}
               </Text>
             </View>
           </View>

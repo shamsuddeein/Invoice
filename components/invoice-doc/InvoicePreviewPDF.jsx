@@ -2,6 +2,7 @@ import { Document, Page, View, Text, Image, StyleSheet } from '@react-pdf/render
 import { DOC, invoiceStamp } from './theme'
 import { formatNaira, formatDate } from '@/lib/utils'
 import { registerPdfFonts } from './pdf-fonts'
+import BrandLogoPDF from '@/components/brand/BrandLogoPDF'
 
 // react-pdf mirror of InvoicePreview — a plain, classic invoice: black ink on white,
 // hairline rules, no header band, no filled amount box. Figures use IBM Plex Mono
@@ -67,7 +68,7 @@ export default function InvoicePreviewPDF({ business = {}, invoice }) {
         {/* Header */}
         <View style={s.headRow}>
           <View style={{ maxWidth: 300 }}>
-            {business.logo ? <Image src={business.logo} style={s.logo} /> : null}
+            {business.logo ? <Image src={business.logo} style={s.logo} /> : <BrandLogoPDF />}
             <Text style={s.bizName}>{business.name || 'Your Business'}</Text>
             <View style={s.bizMeta}>
               {business.address ? <Text>{business.address}</Text> : null}

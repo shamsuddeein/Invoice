@@ -10,15 +10,35 @@ import TableSkeleton from '@/components/ui/Skeleton'
 import ConfirmModal from '@/components/ui/ConfirmModal'
 import StatusFilter from '@/components/invoices/StatusFilter'
 import InvoiceTable from '@/components/invoices/InvoiceTable'
-import { InvoiceIcon, PlusIcon, SearchIcon, XIcon } from '@/components/ui/icons'
+import { InvoiceIcon, PlusIcon, SearchIcon, XIcon, DownloadIcon } from '@/components/ui/icons'
 import { jsonFetch } from '@/lib/fetcher'
-import { formatNaira } from '@/lib/utils'
+import { formatNaira, todayISO } from '@/lib/utils'
+import { downloadCSV } from '@/lib/csv'
+import { useToast } from '@/components/ui/Toast'
+import { STATUS_TABS } from '@/lib/constants'
+
+// Readable invoice-status labels for the export (Title case), reusing STATUS_TABS.
+const STATUS_LABEL = Object.fromEntries(
+  STATUS_TABS.filter((t) => t.value !== 'all').map((t) => [t.value, t.label])
+)
+
+// CSV columns for the invoices export: raw numeric money so spreadsheets can sum.
+const INVOICE_COLUMNS = [
+  { header: 'Invoice Number', value: 'invoiceNumber' },
+  { header: 'Client', value: (r) => r.clientName || '' },
+  { header: 'Issue Date', value: 'issueDate' },
+  { header: 'Status', value: (r) => STATUS_LABEL[r.status] || r.status },
+  { header: 'Total', value: (r) => r.totalAmount ?? 0 },
+  { header: 'Paid', value: (r) => r.amountPaid ?? 0 },
+  { header: 'Balance', value: (r) => r.balanceDue ?? 0 },
+]
 
 // Client island for the invoices list. First paint is server-rendered from
 // `initial` (no mount fetch, no spinner); this component owns the interactive
 // bits — status filter, search, and delete — and re-fetches via /api/invoices
 // after a delete to stay in sync.
 export default function InvoicesClient({ initial, initialError = '' }) {
+  const toast = useToast()
   const [invoices, setInvoices] = useState(initial)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(initialError)
@@ -41,6 +61,11 @@ export default function InvoicesClient({ initial, initialError = '' }) {
     }
   }
 
+  function exportCSV() {
+    downloadCSV(invoices, INVOICE_COLUMNS, `invoices-${todayISO()}.csv`)
+    toast.success(`Exported ${invoices.length} invoice${invoices.length === 1 ? '' : 's'}`)
+  }
+
   const counts = useMemo(() => {
     const c = { all: invoices.length }
     for (const inv of invoices) c[inv.status] = (c[inv.status] || 0) + 1
@@ -58,12 +83,14 @@ export default function InvoicesClient({ initial, initialError = '' }) {
 
   async function confirmDelete() {
     if (!deleteTarget) return
+    const number = deleteTarget.invoiceNumber
     setDeleting(true)
     setDeleteError('')
     try {
       await jsonFetch(`/api/invoices/${deleteTarget.id}`, { method: 'DELETE' })
       setDeleteTarget(null)
       await load()
+      toast.success(`Invoice ${number} deleted`)
     } catch (e) {
       setDeleteError(e.message)
     } finally {
@@ -81,12 +108,18 @@ export default function InvoicesClient({ initial, initialError = '' }) {
         title="Invoices"
         subtitle="Every invoice you've created"
         actions={
-          <Link href="/invoices/new">
-            <Button>
-              <PlusIcon size={16} />
-              New invoice
+          <>
+            <Button variant="secondary" onClick={exportCSV} disabled={invoices.length === 0}>
+              <DownloadIcon size={16} />
+              Export
             </Button>
-          </Link>
+            <Link href="/invoices/new">
+              <Button>
+                <PlusIcon size={16} />
+                New invoice
+              </Button>
+            </Link>
+          </>
         }
       />
 

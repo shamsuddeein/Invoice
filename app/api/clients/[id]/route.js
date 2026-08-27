@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { clients, invoices } from '@/lib/schema'
+import { requireAuth } from '@/lib/guard'
 
 // Live data on every request — never statically cache this GET at build time.
 export const dynamic = 'force-dynamic'
 
 // GET /api/clients/[id] → client + their invoice history (newest first).
 export async function GET(_req, { params }) {
+  const denied = await requireAuth()
+  if (denied) return denied
   const id = Number(params.id)
   const [client] = await db.select().from(clients).where(eq(clients.id, id))
   if (!client) {
@@ -23,6 +26,8 @@ export async function GET(_req, { params }) {
 
 // PUT /api/clients/[id] → update.
 export async function PUT(req, { params }) {
+  const denied = await requireAuth()
+  if (denied) return denied
   const id = Number(params.id)
   let body
   try {
@@ -53,6 +58,8 @@ export async function PUT(req, { params }) {
 
 // DELETE /api/clients/[id] → blocked if the client has invoices (FK integrity).
 export async function DELETE(_req, { params }) {
+  const denied = await requireAuth()
+  if (denied) return denied
   const id = Number(params.id)
   const linked = await db
     .select({ id: invoices.id })

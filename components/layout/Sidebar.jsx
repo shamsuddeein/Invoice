@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
+import BrandLogo from '@/components/brand/BrandLogo'
 import {
   DashboardIcon,
   InvoiceIcon,
@@ -26,9 +27,7 @@ export default function Sidebar({ brand = 'My Business', onNavigate }) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-3 px-5 h-16 border-b border-border">
-        <div className="flex items-center justify-center w-8 h-8 rounded-md bg-accent text-white font-bold shrink-0">
-          ₦
-        </div>
+        <BrandLogo variant="tile" height={32} className="shrink-0" />
         <div className="min-w-0">
           <div className="text-sm font-semibold text-text-primary truncate">{brand}</div>
           <div className="text-[11px]" style={{ color: 'var(--sidebar-text)' }}>

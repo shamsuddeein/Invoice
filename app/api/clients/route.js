@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { clients } from '@/lib/schema'
 import { nowISO } from '@/lib/utils'
 import { getClientsList } from '@/lib/queries'
+import { requireAuth } from '@/lib/guard'
 
 // Live data on every request — never statically cache this GET at build time.
 export const dynamic = 'force-dynamic'
@@ -11,12 +12,16 @@ export const dynamic = 'force-dynamic'
 // The page Server-renders this via the shared getClientsList(); this route
 // serves the same shape for client-side refresh after a mutation.
 export async function GET(req) {
+  const denied = await requireAuth()
+  if (denied) return denied
   const q = req.nextUrl.searchParams.get('q')?.trim()
   return NextResponse.json(await getClientsList({ q }))
 }
 
 // POST /api/clients → create.
 export async function POST(req) {
+  const denied = await requireAuth()
+  if (denied) return denied
   let body
   try {
     body = await req.json()

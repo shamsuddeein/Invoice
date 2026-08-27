@@ -3,20 +3,40 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import PageHeader from '@/components/layout/PageHeader'
+import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import EmptyState from '@/components/ui/EmptyState'
-import { PaymentsIcon, SearchIcon, XIcon } from '@/components/ui/icons'
-import { formatNaira, formatDate } from '@/lib/utils'
+import { PaymentsIcon, SearchIcon, XIcon, DownloadIcon } from '@/components/ui/icons'
+import { formatNaira, formatDate, todayISO } from '@/lib/utils'
 import { PAYMENT_METHOD_LABELS } from '@/lib/constants'
+import { downloadCSV } from '@/lib/csv'
+import { useToast } from '@/components/ui/Toast'
+
+// CSV columns for the payments export: raw numeric amount so spreadsheets can sum.
+const PAYMENT_COLUMNS = [
+  { header: 'Receipt Number', value: 'receiptNumber' },
+  { header: 'Date', value: 'paymentDate' },
+  { header: 'Client', value: (r) => r.clientName || '' },
+  { header: 'Invoice Number', value: (r) => r.invoiceNumber || '' },
+  { header: 'Method', value: (r) => PAYMENT_METHOD_LABELS[r.paymentMethod] || r.paymentMethod },
+  { header: 'Reference', value: (r) => r.referenceNumber || '' },
+  { header: 'Amount', value: (r) => r.amountPaid ?? 0 },
+]
 
 // Client island for the payments ledger. First paint is server-rendered from
 // `initial` (no mount fetch, no spinner). Payments are read-only here — no
 // delete/refresh — so this island only owns search + the total.
 export default function PaymentsClient({ initial, initialError = '' }) {
   const router = useRouter()
+  const toast = useToast()
   const [search, setSearch] = useState('')
   const payments = initial
   const error = initialError
+
+  function exportCSV() {
+    downloadCSV(payments, PAYMENT_COLUMNS, `payments-${todayISO()}.csv`)
+    toast.success(`Exported ${payments.length} payment${payments.length === 1 ? '' : 's'}`)
+  }
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -33,7 +53,16 @@ export default function PaymentsClient({ initial, initialError = '' }) {
 
   return (
     <div>
-      <PageHeader title="Payments" subtitle="Every payment you've received" />
+      <PageHeader
+        title="Payments"
+        subtitle="Every payment you've received"
+        actions={
+          <Button variant="secondary" onClick={exportCSV} disabled={payments.length === 0}>
+            <DownloadIcon size={16} />
+            Export
+          </Button>
+        }
+      />
 
       {error ? (
         <div

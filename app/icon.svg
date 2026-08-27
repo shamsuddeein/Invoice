@@ -1,13 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <!-- App favicon — mirrors the in-app brand mark (Sidebar/AppShell ₦ tile).
-       Tile colour is the accent token (--accent). The ₦ is drawn as strokes,
-       not text, so it renders identically everywhere regardless of whether the
-       tab's font has a naira glyph. Swap the fill alongside --accent when the
-       real brand purple is provided. -->
-  <rect width="64" height="64" rx="12" fill="#6366f1"/>
-  <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 44 V20 L42 44 V20"/>
-    <path d="M16 28 H48"/>
-    <path d="M16 36 H48"/>
+  <!-- App favicon — the AUSAD brand mark on a rounded gradient tile, mirroring the
+       in-app BrandLogo variant="tile" (Sidebar / mobile header). The swoosh is the
+       same cubic-bézier path used by components/brand/BrandLogo.jsx and
+       BrandLogoPDF.jsx, drawn in white for contrast on the gradient. -->
+  <defs>
+    <linearGradient id="ausad" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="0.55" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1E3A8A"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#ausad)"/>
+  <g transform="translate(11,11) scale(0.875)">
+    <path d="M6 39 C 11 20 27 12 41 15" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="41" cy="11" r="4.6" fill="#ffffff"/>
   </g>
 </svg>

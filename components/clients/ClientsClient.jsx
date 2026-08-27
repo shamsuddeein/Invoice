@@ -9,13 +9,25 @@ import EmptyState from '@/components/ui/EmptyState'
 import TableSkeleton from '@/components/ui/Skeleton'
 import ConfirmModal from '@/components/ui/ConfirmModal'
 import ClientTable from '@/components/clients/ClientTable'
-import { ClientsIcon, PlusIcon, SearchIcon, XIcon } from '@/components/ui/icons'
+import { ClientsIcon, PlusIcon, SearchIcon, XIcon, DownloadIcon } from '@/components/ui/icons'
 import { jsonFetch } from '@/lib/fetcher'
+import { downloadCSV } from '@/lib/csv'
+import { useToast } from '@/components/ui/Toast'
+import { todayISO } from '@/lib/utils'
+
+// CSV columns for the clients export.
+const CLIENT_COLUMNS = [
+  { header: 'Name', value: 'name' },
+  { header: 'Email', value: (r) => r.email || '' },
+  { header: 'Phone', value: (r) => r.phone || '' },
+  { header: 'Address', value: (r) => r.address || '' },
+]
 
 // Client island for the clients list. First paint is server-rendered from
 // `initial` (no mount fetch, no spinner); this component owns search and delete,
 // re-fetching /api/clients after a delete to stay in sync.
 export default function ClientsClient({ initial, initialError = '' }) {
+  const toast = useToast()
   const [clients, setClients] = useState(initial)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(initialError)
@@ -36,6 +48,11 @@ export default function ClientsClient({ initial, initialError = '' }) {
     }
   }
 
+  function exportCSV() {
+    downloadCSV(clients, CLIENT_COLUMNS, `clients-${todayISO()}.csv`)
+    toast.success(`Exported ${clients.length} client${clients.length === 1 ? '' : 's'}`)
+  }
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return clients
@@ -46,12 +63,14 @@ export default function ClientsClient({ initial, initialError = '' }) {
 
   async function confirmDelete() {
     if (!deleteTarget) return
+    const name = deleteTarget.name
     setDeleting(true)
     setDeleteError('')
     try {
       await jsonFetch(`/api/clients/${deleteTarget.id}`, { method: 'DELETE' })
       setDeleteTarget(null)
       await load()
+      toast.success(`${name} deleted`)
     } catch (e) {
       setDeleteError(e.message)
     } finally {
@@ -65,12 +84,18 @@ export default function ClientsClient({ initial, initialError = '' }) {
         title="Clients"
         subtitle="People and businesses you invoice"
         actions={
-          <Link href="/clients/new">
-            <Button>
-              <PlusIcon size={16} />
-              New client
+          <>
+            <Button variant="secondary" onClick={exportCSV} disabled={clients.length === 0}>
+              <DownloadIcon size={16} />
+              Export
             </Button>
-          </Link>
+            <Link href="/clients/new">
+              <Button>
+                <PlusIcon size={16} />
+                New client
+              </Button>
+            </Link>
+          </>
         }
       />
 

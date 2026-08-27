@@ -1,8 +1,9 @@
 'use client'
 
 import { DOC, MONO, SANS } from './theme'
-import { formatNaira, formatDate } from '@/lib/utils'
+import { formatNaira, formatDate, receiptStanding } from '@/lib/utils'
 import { PAYMENT_METHOD_LABELS } from '@/lib/constants'
+import BrandLogo from '@/components/brand/BrandLogo'
 
 // Plain, classic HTML receipt for a single payment — on-screen preview and the
 // html2canvas capture target (id="receipt-preview"). Black ink on white, hairline
@@ -12,7 +13,8 @@ export default function ReceiptPreview({ business = {}, invoice, payment }) {
   if (!invoice || !payment) return null
   const client = invoice.client || {}
   const num = { fontFamily: MONO, whiteSpace: 'nowrap' }
-  const paidInFull = (invoice.balanceDue || 0) <= 0.01
+  // Standing as of THIS payment (see receiptStanding) — never the live balance.
+  const { paidThrough, balanceAsOf, paidInFull } = receiptStanding(invoice, payment)
   const label = { fontSize: 10, letterSpacing: 1, color: DOC.faint, fontWeight: 700, textTransform: 'uppercase' }
 
   const detailRows = [
@@ -33,7 +35,9 @@ export default function ReceiptPreview({ business = {}, invoice, payment }) {
           <div style={{ maxWidth: 360 }}>
             {business.logo ? (
               <img src={business.logo} alt="" style={{ maxHeight: 48, maxWidth: 200, objectFit: 'contain', display: 'block', marginBottom: 12 }} />
-            ) : null}
+            ) : (
+              <BrandLogo variant="full" height={46} style={{ display: 'block', marginBottom: 12 }} />
+            )}
             <div style={{ fontSize: 22, fontWeight: 700, color: DOC.ink }}>{business.name || 'Your Business'}</div>
             <div style={{ marginTop: 6, fontSize: 12, color: DOC.muted, lineHeight: 1.6 }}>
               {business.address && <div style={{ whiteSpace: 'pre-line' }}>{business.address}</div>}
@@ -88,10 +92,10 @@ export default function ReceiptPreview({ business = {}, invoice, payment }) {
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 18 }}>
           <div style={{ width: 280 }}>
             <SummaryRow label="Invoice total" value={formatNaira(invoice.totalAmount)} />
-            <SummaryRow label="Total paid" value={formatNaira(invoice.amountPaid)} />
+            <SummaryRow label="Total paid" value={formatNaira(paidThrough)} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 10, paddingTop: 10, borderTop: `1.5px solid ${DOC.rule}` }}>
               <span style={{ fontSize: 14, fontWeight: 700 }}>Balance due</span>
-              <span style={{ fontSize: 16, fontWeight: 700, color: paidInFull ? DOC.paid : DOC.ink, ...num }}>{formatNaira(invoice.balanceDue)}</span>
+              <span style={{ fontSize: 16, fontWeight: 700, color: paidInFull ? DOC.paid : DOC.ink, ...num }}>{formatNaira(balanceAsOf)}</span>
             </div>
           </div>
         </div>

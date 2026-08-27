@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import BrandLogo from '@/components/brand/BrandLogo'
 import FormField from '@/components/ui/FormField'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
@@ -32,9 +33,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-base px-4">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center mb-6">
-          <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-accent text-white text-2xl font-bold mb-3">
-            ₦
-          </div>
+          <BrandLogo variant="full" height={46} className="mb-4" />
           <h1 className="t-h2">Welcome back</h1>
           <p className="t-secondary text-sm mt-1">Sign in to manage your invoices</p>
         </div>
@@ -58,6 +57,7 @@ export default function LoginPage() {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your username"
               autoFocus
               autoComplete="username"
               required
@@ -70,6 +70,7 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
               autoComplete="current-password"
               required
             />

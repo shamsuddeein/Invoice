@@ -6,9 +6,11 @@ import PageHeader from '@/components/layout/PageHeader'
 import BackLink from '@/components/ui/BackLink'
 import ClientForm from '@/components/clients/ClientForm'
 import { jsonFetch } from '@/lib/fetcher'
+import { useToast } from '@/components/ui/Toast'
 
 export default function NewClientPage() {
   const router = useRouter()
+  const toast = useToast()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -20,6 +22,7 @@ export default function NewClientPage() {
         method: 'POST',
         body: JSON.stringify(values),
       })
+      toast.success(`${created.name} added`)
       router.push(`/clients/${created.id}`)
     } catch (e) {
       setError(e.message)

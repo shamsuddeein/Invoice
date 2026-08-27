@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { business } from '@/lib/schema'
 import AppShell from '@/components/layout/AppShell'
+import { ToastProvider } from '@/components/ui/Toast'
 
 // Server layout for every authenticated page. middleware.js already gates
 // access; here we just load the business name for the sidebar brand.
@@ -17,5 +18,9 @@ export default async function AppLayout({ children }) {
     // DB not reachable yet — fall back to the default brand.
   }
 
-  return <AppShell brand={brand}>{children}</AppShell>
+  return (
+    <ToastProvider>
+      <AppShell brand={brand}>{children}</AppShell>
+    </ToastProvider>
+  )
 }

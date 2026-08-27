@@ -2,6 +2,7 @@
 
 import { DOC, MONO, SANS, invoiceStamp } from './theme'
 import { formatNaira, formatDate } from '@/lib/utils'
+import BrandLogo from '@/components/brand/BrandLogo'
 
 // Plain, classic HTML invoice — the on-screen preview AND the html2canvas capture
 // target (id="invoice-preview"). Black ink on white, hairline rules, a simple
@@ -32,7 +33,9 @@ export default function InvoicePreview({ business = {}, invoice }) {
           <div style={{ maxWidth: 360 }}>
             {business.logo ? (
               <img src={business.logo} alt="" style={{ maxHeight: 48, maxWidth: 200, objectFit: 'contain', display: 'block', marginBottom: 12 }} />
-            ) : null}
+            ) : (
+              <BrandLogo variant="full" height={46} style={{ display: 'block', marginBottom: 12 }} />
+            )}
             <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: 0.2, color: DOC.ink }}>
               {business.name || 'Your Business'}
             </div>

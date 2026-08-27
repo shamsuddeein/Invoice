@@ -4,6 +4,7 @@ import { useState, createElement } from 'react'
 import Button from '@/components/ui/Button'
 import { DownloadIcon, ImageIcon, PrinterIcon } from '@/components/ui/icons'
 import { downloadNodePNG, printNode } from '@/lib/download'
+import { useToast } from '@/components/ui/Toast'
 
 // Print + Save Image + Download PDF for a document. The react-pdf renderer and the
 // PDF document component are dynamic-imported inside the handler so @react-pdf/
@@ -21,6 +22,7 @@ export default function DocumentActions({
 }) {
   const [busy, setBusy] = useState('') // '' | 'print' | 'png' | 'pdf'
   const [error, setError] = useState('')
+  const toast = useToast()
 
   async function handlePrint() {
     setBusy('print')
@@ -39,6 +41,7 @@ export default function DocumentActions({
     setError('')
     try {
       await downloadNodePNG(document.getElementById(targetId), `${fileBase}.png`)
+      toast.success(`Saved ${fileBase}.png`)
     } catch (e) {
       setError(e.message || 'Could not generate image.')
     } finally {
@@ -62,6 +65,7 @@ export default function DocumentActions({
       const blob = await pdf(element).toBlob()
       const { downloadBlob } = await import('@/lib/download')
       downloadBlob(blob, `${fileBase}.pdf`)
+      toast.success(`Downloaded ${fileBase}.pdf`)
     } catch (e) {
       setError(e.message || 'Could not generate PDF.')
     } finally {

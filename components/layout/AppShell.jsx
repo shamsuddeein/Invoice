@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import Sidebar from './Sidebar'
+import BrandLogo from '@/components/brand/BrandLogo'
 import {
   HomeIcon,
   InvoiceIcon,
@@ -37,7 +38,7 @@ export default function AppShell({ brand, children }) {
     )
   }, [])
 
-  const initial = (brand || '').trim().charAt(0).toUpperCase() || '₦'
+  const initial = (brand || '').trim().charAt(0).toUpperCase() || 'A'
   const isActive = (base) => pathname === base || pathname.startsWith(base + '/')
   const moreActive = isActive('/payments') || isActive('/settings')
 
@@ -52,9 +53,7 @@ export default function AppShell({ brand, children }) {
         {/* ── Mobile top header ── */}
         <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between h-14 px-4 bg-surface border-b border-border">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="flex items-center justify-center w-7 h-7 rounded-md bg-accent text-white font-bold text-sm shrink-0">
-              ₦
-            </span>
+            <BrandLogo variant="tile" height={28} className="shrink-0" />
             <span className="font-semibold text-text-primary truncate">{brand}</span>
           </div>
           <Link

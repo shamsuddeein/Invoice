@@ -3,7 +3,8 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { invoices, invoiceItems, clients, business } from '@/lib/schema'
 import { generateDocNumber, nowISO, todayISO, round2 } from '@/lib/utils'
-import { getInvoicesList } from '@/lib/queries'
+import { getInvoicesList, getOrCreateBusiness } from '@/lib/queries'
+import { requireAuth } from '@/lib/guard'
 
 // Live data on every request — never statically cache this GET at build time.
 export const dynamic = 'force-dynamic'
@@ -12,6 +13,8 @@ export const dynamic = 'force-dynamic'
 // Server-renders this via the shared getInvoicesList(); this route serves the
 // same shape for client-side refresh after a mutation.
 export async function GET(req) {
+  const denied = await requireAuth()
+  if (denied) return denied
   const sp = req.nextUrl.searchParams
   const rows = await getInvoicesList({ status: sp.get('status'), q: sp.get('q')?.trim() })
   return NextResponse.json(rows)
@@ -20,6 +23,8 @@ export async function GET(req) {
 // POST /api/invoices → create invoice + items + auto number in one transaction,
 // then bump business.nextInvoiceNumber (doc §11).
 export async function POST(req) {
+  const denied = await requireAuth()
+  if (denied) return denied
   let body
   try {
     body = await req.json()
@@ -36,11 +41,15 @@ export async function POST(req) {
   // The due-date feature was removed — the NOT NULL column is always stored as ''.
   const dueDate = ''
 
-  const items = (Array.isArray(body.items) ? body.items : [])
+  const rawItems = Array.isArray(body.items) ? body.items : []
+  if (rawItems.length > 500) {
+    return NextResponse.json({ error: 'Too many line items (max 500).' }, { status: 400 })
+  }
+  const items = rawItems
     .map((it) => ({
-      description: String(it.description || '').trim(),
-      quantity: Number(it.quantity) || 0,
-      unitPrice: Number(it.unitPrice) || 0,
+      description: String(it.description || '').trim().slice(0, 500),
+      quantity: Math.max(0, Number(it.quantity) || 0),
+      unitPrice: Math.max(0, Number(it.unitPrice) || 0),
     }))
     .filter((it) => it.description.length > 0)
 
@@ -60,12 +69,15 @@ export async function POST(req) {
   const taxAmount = round2(subtotal * (taxRate / 100))
   const totalAmount = round2(subtotal + taxAmount)
   const now = nowISO()
+  // Guarantee the singleton business row exists so the number bump below isn't a
+  // no-op on a fresh DB (which would collide invoice numbers at INV-YYYY-001).
+  await getOrCreateBusiness()
 
   const created = await db.transaction(async (tx) => {
     const [biz] = await tx.select().from(business).where(eq(business.id, 1))
     const prefix = biz?.invoicePrefix || 'INV'
     const nextNum = biz?.nextInvoiceNumber || 1
-    const invoiceNumber = generateDocNumber(prefix, nextNum)
+    const invoiceNumber = generateDocNumber(prefix, nextNum, issueDate)
 
     const [inv] = await tx
       .insert(invoices)
@@ -75,7 +87,7 @@ export async function POST(req) {
         issueDate,
         dueDate,
         status,
-        notes: String(body.notes || ''),
+        notes: String(body.notes || '').slice(0, 5000),
         subtotal,
         taxRate,
         taxAmount,
