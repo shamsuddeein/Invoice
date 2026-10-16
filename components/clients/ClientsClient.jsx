@@ -11,7 +11,7 @@ import ConfirmModal from '@/components/ui/ConfirmModal'
 import ClientTable from '@/components/clients/ClientTable'
 import { ClientsIcon, PlusIcon, SearchIcon, XIcon, DownloadIcon } from '@/components/ui/icons'
 import { jsonFetch } from '@/lib/fetcher'
-import { downloadCSV } from '@/lib/csv'
+import { downloadExcel } from '@/lib/excel'
 import { useToast } from '@/components/ui/Toast'
 import { todayISO } from '@/lib/utils'
 
@@ -48,11 +48,6 @@ export default function ClientsClient({ initial, initialError = '' }) {
     }
   }
 
-  function exportCSV() {
-    downloadCSV(clients, CLIENT_COLUMNS, `clients-${todayISO()}.csv`)
-    toast.success(`Exported ${clients.length} client${clients.length === 1 ? '' : 's'}`)
-  }
-
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return clients
@@ -60,6 +55,11 @@ export default function ClientsClient({ initial, initialError = '' }) {
       [c.name, c.email, c.phone].some((v) => (v || '').toLowerCase().includes(q))
     )
   }, [clients, search])
+
+  function exportExcel() {
+    downloadExcel(filtered, CLIENT_COLUMNS, `clients-${todayISO()}.xlsx`, 'Clients')
+    toast.success(`Exported ${filtered.length} client${filtered.length === 1 ? '' : 's'} to Excel`)
+  }
 
   async function confirmDelete() {
     if (!deleteTarget) return
@@ -85,9 +85,9 @@ export default function ClientsClient({ initial, initialError = '' }) {
         subtitle="People and businesses you invoice"
         actions={
           <>
-            <Button variant="secondary" onClick={exportCSV} disabled={clients.length === 0}>
+            <Button variant="secondary" onClick={exportExcel} disabled={filtered.length === 0}>
               <DownloadIcon size={16} />
-              Export
+              Export Excel
             </Button>
             <Link href="/clients/new">
               <Button>

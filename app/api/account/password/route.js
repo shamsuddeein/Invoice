@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { auth } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { appAuth } from '@/lib/schema'
@@ -58,10 +58,24 @@ export async function POST(req) {
 
   const passwordHash = hashPassword(newPassword)
   const updatedAt = nowISO()
-  await db
-    .insert(appAuth)
-    .values({ id: 1, passwordHash, updatedAt })
-    .onConflictDoUpdate({ target: appAuth.id, set: { passwordHash, updatedAt } })
+  try {
+    await db
+      .insert(appAuth)
+      .values({ id: 1, passwordHash, updatedAt })
+      .onConflictDoUpdate({ target: appAuth.id, set: { passwordHash, updatedAt } })
+  } catch (err) {
+    if (err.message?.includes('no such table')) {
+      await db.run(
+        sql`CREATE TABLE IF NOT EXISTS app_auth (id integer PRIMARY KEY DEFAULT 1 NOT NULL, password_hash text NOT NULL, updated_at text)`
+      )
+      await db
+        .insert(appAuth)
+        .values({ id: 1, passwordHash, updatedAt })
+        .onConflictDoUpdate({ target: appAuth.id, set: { passwordHash, updatedAt } })
+    } else {
+      throw err
+    }
+  }
 
   return NextResponse.json({ ok: true })
 }

@@ -19,7 +19,7 @@ export default function FormField({
         </Label>
       )}
       {children}
-      {hint && !error && <span className="t-small t-secondary">{hint}</span>}
+      {hint && !error && <span className="t-small t-secondary" style={{ display: 'block', wordWrap: 'break-word' }}>{hint}</span>}
       {error && <span className="form-error">{error}</span>}
     </div>
   )

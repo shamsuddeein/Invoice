@@ -9,10 +9,10 @@ import EmptyState from '@/components/ui/EmptyState'
 import { PaymentsIcon, SearchIcon, XIcon, DownloadIcon } from '@/components/ui/icons'
 import { formatNaira, formatDate, todayISO } from '@/lib/utils'
 import { PAYMENT_METHOD_LABELS } from '@/lib/constants'
-import { downloadCSV } from '@/lib/csv'
+import { downloadExcel } from '@/lib/excel'
 import { useToast } from '@/components/ui/Toast'
 
-// CSV columns for the payments export: raw numeric amount so spreadsheets can sum.
+// CSV/Excel columns for the payments export: raw numeric amount so spreadsheets can sum.
 const PAYMENT_COLUMNS = [
   { header: 'Receipt Number', value: 'receiptNumber' },
   { header: 'Date', value: 'paymentDate' },
@@ -33,11 +33,6 @@ export default function PaymentsClient({ initial, initialError = '' }) {
   const payments = initial
   const error = initialError
 
-  function exportCSV() {
-    downloadCSV(payments, PAYMENT_COLUMNS, `payments-${todayISO()}.csv`)
-    toast.success(`Exported ${payments.length} payment${payments.length === 1 ? '' : 's'}`)
-  }
-
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return payments
@@ -51,15 +46,20 @@ export default function PaymentsClient({ initial, initialError = '' }) {
     [filtered]
   )
 
+  function exportExcel() {
+    downloadExcel(filtered, PAYMENT_COLUMNS, `payments-${todayISO()}.xlsx`, 'Payments')
+    toast.success(`Exported ${filtered.length} payment${filtered.length === 1 ? '' : 's'} to Excel`)
+  }
+
   return (
     <div>
       <PageHeader
         title="Payments"
         subtitle="Every payment you've received"
         actions={
-          <Button variant="secondary" onClick={exportCSV} disabled={payments.length === 0}>
+          <Button variant="secondary" onClick={exportExcel} disabled={filtered.length === 0}>
             <DownloadIcon size={16} />
-            Export
+            Export Excel
           </Button>
         }
       />

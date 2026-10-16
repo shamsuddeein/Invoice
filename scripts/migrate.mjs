@@ -2,6 +2,10 @@ import fs from 'fs'
 import path from 'path'
 import { createClient } from '@libsql/client'
 
+if (fs.existsSync('.env.local') && !process.env.TURSO_DATABASE_URL) {
+  process.loadEnvFile?.('.env.local')
+}
+
 const url = process.env.TURSO_DATABASE_URL || 'file:local.db'
 const authToken = process.env.TURSO_AUTH_TOKEN || undefined
 const client = createClient({ url, authToken })

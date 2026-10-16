@@ -22,6 +22,7 @@ export default function EditInvoiceClient({ id, initialInvoice, clients = [] }) 
     try {
       await jsonFetch(`/api/invoices/${id}`, { method: 'PUT', body: JSON.stringify(values) })
       toast.success(`Invoice ${initialInvoice?.invoiceNumber || ''} updated`.trim())
+      router.refresh()          // invalidate RSC cache so detail page shows fresh totals
       router.push(`/invoices/${id}`)
     } catch (e) {
       setError(e.message)

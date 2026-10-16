@@ -13,7 +13,7 @@ import InvoiceTable from '@/components/invoices/InvoiceTable'
 import { InvoiceIcon, PlusIcon, SearchIcon, XIcon, DownloadIcon } from '@/components/ui/icons'
 import { jsonFetch } from '@/lib/fetcher'
 import { formatNaira, todayISO } from '@/lib/utils'
-import { downloadCSV } from '@/lib/csv'
+import { downloadExcel } from '@/lib/excel'
 import { useToast } from '@/components/ui/Toast'
 import { STATUS_TABS } from '@/lib/constants'
 
@@ -61,9 +61,9 @@ export default function InvoicesClient({ initial, initialError = '' }) {
     }
   }
 
-  function exportCSV() {
-    downloadCSV(invoices, INVOICE_COLUMNS, `invoices-${todayISO()}.csv`)
-    toast.success(`Exported ${invoices.length} invoice${invoices.length === 1 ? '' : 's'}`)
+  function exportExcel() {
+    downloadExcel(filtered, INVOICE_COLUMNS, `invoices-${todayISO()}.xlsx`, 'Invoices')
+    toast.success(`Exported ${filtered.length} invoice${filtered.length === 1 ? '' : 's'} to Excel`)
   }
 
   const counts = useMemo(() => {
@@ -109,9 +109,9 @@ export default function InvoicesClient({ initial, initialError = '' }) {
         subtitle="Every invoice you've created"
         actions={
           <>
-            <Button variant="secondary" onClick={exportCSV} disabled={invoices.length === 0}>
+            <Button variant="secondary" onClick={exportExcel} disabled={filtered.length === 0}>
               <DownloadIcon size={16} />
-              Export
+              Export Excel
             </Button>
             <Link href="/invoices/new">
               <Button>
