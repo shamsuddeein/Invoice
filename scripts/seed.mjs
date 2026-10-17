@@ -6,13 +6,9 @@
 //   TURSO_DATABASE_URL=... npm run db:seed   (remote)
 import fs from 'fs'
 import { createClient } from '@libsql/client'
+import { getDbConfig } from '../lib/env-config.mjs'
 
-if (fs.existsSync('.env.local') && !process.env.TURSO_DATABASE_URL) {
-  process.loadEnvFile?.('.env.local')
-}
-
-const url = process.env.TURSO_DATABASE_URL || 'file:local.db'
-const authToken = process.env.TURSO_AUTH_TOKEN || undefined
+const { url, authToken } = getDbConfig()
 const client = createClient({ url, authToken })
 
 const now = new Date().toISOString()

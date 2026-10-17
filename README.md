@@ -15,7 +15,7 @@ numbers.
 
 ## 1. Run it locally
 
-You need **Node 20+** and **npm**.
+You need **Node 20.6+** and **npm**.
 
 ```bash
 npm install
@@ -148,14 +148,25 @@ There is no sign-up. The single login is whatever you set in `OWNER_USERNAME` /
 | `npm run dev` | Start the dev server (http://localhost:3000) |
 | `npm run build` | Production build |
 | `npm run start` | Run the production build locally |
+| `npm test` | Run isolated regression tests |
 | `npm run db:push` | Create/update database tables from the schema |
 | `npm run db:seed` | Insert the single settings row (id=1) if missing — safe to re-run |
 | `npm run db:generate` | Generate SQL migration files from the schema (optional) |
-| `npm run db:migrate` | Apply generated migrations (alternative to `db:push`) |
+| `npm run db:migrate` | Apply generated migrations (`drizzle/*.sql`) |
 
 ---
 
-## 6. Notes
+## 6. Database Configuration Resolution
+
+All database tooling (`db:push`, `db:migrate`, `db:seed`, and runtime Next.js server) uses unified environment resolution:
+- Reads `.env.local` (and `.env`), while giving top precedence to any shell environment overrides.
+- If `TURSO_DATABASE_URL` is set to a remote `libsql://` or `https://` database in the shell without a token, the loader safely pulls `TURSO_AUTH_TOKEN` from `.env.local` if present.
+- Environment files use standard dotenv syntax, including `export`, quoted values, and trailing comments. An unreadable file stops the command instead of silently switching databases.
+- Remote Turso URLs strictly require `TURSO_AUTH_TOKEN`; if missing, commands fail with a clear configuration error instead of silently falling back to a local SQLite database.
+
+---
+
+## 7. Notes
 
 - **PDF/PNG generation is client-side.** `@react-pdf/renderer` and `html2canvas` load only
   in the browser when you click a download button, so they never run on the server.
@@ -165,7 +176,8 @@ There is no sign-up. The single login is whatever you set in `OWNER_USERNAME` /
 - **Invoice status is managed for you.** Recording payments moves an invoice to
   `partially_paid` then `paid` automatically; you can't move a paid invoice back to draft —
   the app manages those transitions.
-
-# Invoice
-
-# Invoice
+- **Receipts maintain immutable financial snapshots.** When a payment receipt is issued,
+  its standing (`invoiceTotalSnapshot`, `paidThroughSnapshot`, `balanceSnapshot`) is recorded
+  permanently and will never change retroactively if the invoice is later edited or backdated
+  payments are logged. Legacy payments without stored snapshots fall back to best-effort dynamic
+  calculation.

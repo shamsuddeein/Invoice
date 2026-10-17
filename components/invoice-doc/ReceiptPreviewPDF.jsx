@@ -46,7 +46,7 @@ const s = StyleSheet.create({
 export default function ReceiptPreviewPDF({ business = {}, invoice, payment }) {
   const client = invoice?.client || {}
   // Standing as of THIS payment (see receiptStanding) — never the live balance.
-  const { paidThrough, balanceAsOf, paidInFull } = receiptStanding(invoice, payment)
+  const { invoiceTotal, paidThrough, balanceAsOf, paidInFull } = receiptStanding(invoice, payment)
 
   const detailRows = [
     { label: 'Payment date', value: formatDate(payment?.paymentDate), mono: true },
@@ -110,7 +110,7 @@ export default function ReceiptPreviewPDF({ business = {}, invoice, payment }) {
           <View style={s.totalsBox}>
             <View style={s.totRow}>
               <Text style={s.totLabel}>Invoice total</Text>
-              <Text style={s.totVal}>{formatNaira(invoice?.totalAmount)}</Text>
+              <Text style={s.totVal}>{formatNaira(invoiceTotal)}</Text>
             </View>
             <View style={s.totRow}>
               <Text style={s.totLabel}>Total paid</Text>

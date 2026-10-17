@@ -60,11 +60,53 @@ export default function InvoiceForm({
   const [addingClient, setAddingClient] = useState(false)
   const [addError, setAddError] = useState('')
 
-  const { subtotal, taxAmount, totalAmount } = useInvoiceCalculator(form.items, form.taxRate)
+  const {
+    subtotal,
+    taxAmount,
+    totalAmount,
+    taxRate: normalizedTaxRate,
+    error: calculationError,
+  } = useInvoiceCalculator(form.items, form.taxRate)
 
-  const describedItems = form.items.filter((it) => String(it.description).trim())
+  const itemValidation = useMemo(() => {
+    return form.items.map((it) => {
+      const desc = String(it.description || '').trim()
+      const rawPrice = it.unitPrice
+      const rawQty = it.quantity
+      const priceNum = Number(rawPrice)
+      const qtyNum = Number(rawQty)
+
+      const isBlank = !desc && (rawPrice === '' || rawPrice == null || priceNum === 0)
+      if (isBlank) return { isBlank: true, hasError: false, errors: {} }
+
+      const errors = {}
+      if (rawQty === '' || !Number.isFinite(qtyNum) || qtyNum < 0) {
+        errors.quantity = 'Must be ≥ 0'
+      }
+      if (rawPrice === '' || !Number.isFinite(priceNum) || priceNum < 0) {
+        errors.unitPrice = 'Must be ≥ 0'
+      }
+      if (!desc) {
+        errors.description = 'Description is required'
+      }
+
+      const hasError = Object.keys(errors).length > 0
+      return { isBlank: false, hasError, errors }
+    })
+  }, [form.items])
+
+  const taxRateNum = Number(form.taxRate)
+  const taxRateError =
+    form.taxRate !== '' &&
+    form.taxRate != null &&
+    (!Number.isFinite(taxRateNum) || taxRateNum < 0 || taxRateNum > 100)
+      ? 'Tax rate must be between 0 and 100%'
+      : ''
+
+  const hasItemErrors = itemValidation.some((v) => v.hasError)
+  const validItems = form.items.filter((_, idx) => !itemValidation[idx].isBlank && !itemValidation[idx].hasError)
   const clientMissing = !form.clientId
-  const itemsMissing = describedItems.length === 0
+  const itemsMissing = validItems.length === 0
 
   function updateItem(index, next) {
     setForm((f) => ({ ...f, items: f.items.map((it, i) => (i === index ? next : it)) }))
@@ -94,18 +136,18 @@ export default function InvoiceForm({
 
   function submit(nextIntent) {
     setTouched(true)
-    if (clientMissing || itemsMissing) return
+    if (clientMissing || itemsMissing || hasItemErrors || taxRateError || calculationError) return
     setIntent(nextIntent)
     onSubmit(
       {
         clientId: Number(form.clientId),
         issueDate: form.issueDate,
-        taxRate: Number(form.taxRate) || 0,
+        taxRate: normalizedTaxRate,
         notes: form.notes,
-        items: describedItems.map((it) => ({
+        items: validItems.map((it) => ({
           description: String(it.description).trim(),
-          quantity: Number(it.quantity) || 0,
-          unitPrice: Number(it.unitPrice) || 0,
+          quantity: Math.max(0, Number(it.quantity) || 0),
+          unitPrice: Math.max(0, Number(it.unitPrice) || 0),
         })),
         status: nextIntent === 'sent' ? 'sent' : 'draft',
       },
@@ -169,14 +211,21 @@ export default function InvoiceForm({
             />
           </FormField>
 
-          <FormField label="Tax rate" htmlFor="taxRate" hint="Applied to the subtotal.">
+          <FormField
+            label="Tax rate"
+            htmlFor="taxRate"
+            hint="Applied to the subtotal, rounded to two decimal places."
+            error={touched && taxRateError ? taxRateError : ''}
+          >
             <div className="relative">
               <Input
                 id="taxRate"
                 mono
                 type="number"
                 min="0"
-                step="0.1"
+                max="100"
+                step="0.01"
+                error={touched && !!taxRateError}
                 value={form.taxRate}
                 onChange={(e) => setForm((f) => ({ ...f, taxRate: e.target.value }))}
                 className="pr-8"
@@ -211,12 +260,19 @@ export default function InvoiceForm({
               onChange={updateItem}
               onRemove={removeItem}
               canRemove={form.items.length > 1}
+              errors={touched || itemValidation[i]?.hasError ? itemValidation[i]?.errors : {}}
             />
           ))}
         </div>
 
-        {touched && itemsMissing && (
+        {touched && itemsMissing && !hasItemErrors && (
           <p className="form-error mt-2">Add at least one line item with a description.</p>
+        )}
+        {touched && hasItemErrors && (
+          <p className="form-error mt-2">Please fix incomplete or invalid line items before saving.</p>
+        )}
+        {touched && taxRateError && (
+          <p className="form-error mt-2">{taxRateError}</p>
         )}
 
         <div className="mt-4">
@@ -227,12 +283,16 @@ export default function InvoiceForm({
         </div>
 
         <div className="mt-6">
-          <InvoiceTotalsPanel
-            subtotal={subtotal}
-            taxRate={Number(form.taxRate) || 0}
-            taxAmount={taxAmount}
-            totalAmount={totalAmount}
-          />
+          {calculationError ? (
+            <p role="alert" className="form-error">{calculationError}</p>
+          ) : (
+            <InvoiceTotalsPanel
+              subtotal={subtotal}
+              taxRate={normalizedTaxRate}
+              taxAmount={taxAmount}
+              totalAmount={totalAmount}
+            />
+          )}
         </div>
       </div>
 

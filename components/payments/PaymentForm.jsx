@@ -7,7 +7,7 @@ import Select from '@/components/ui/Select'
 import Textarea from '@/components/ui/Textarea'
 import FormField from '@/components/ui/FormField'
 import { PAYMENT_METHODS } from '@/lib/constants'
-import { formatNaira, todayISO } from '@/lib/utils'
+import { formatNaira, todayISO, round2 } from '@/lib/utils'
 
 // Record-payment form shown inside a modal on the invoice detail. Amount defaults
 // to the full outstanding balance; the owner can lower it for a partial payment.
@@ -23,7 +23,7 @@ export default function PaymentForm({ balanceDue = 0, onSubmit, onCancel, submit
 
   const amount = Number(form.amountPaid)
   const amountInvalid = !amount || amount <= 0
-  const overBalance = amount > balanceDue + 0.01
+  const overBalance = round2(amount) > round2(balanceDue)
 
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }))

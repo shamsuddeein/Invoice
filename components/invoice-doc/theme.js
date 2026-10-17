@@ -24,7 +24,7 @@ export const DOC = {
 export function invoiceStamp(invoice = {}) {
   const total = invoice.totalAmount || 0
   const bal = invoice.balanceDue == null ? total : invoice.balanceDue
-  if (total > 0 && bal <= 0.01) return { label: 'PAID', color: DOC.paid }
+  if (total > 0 && bal === 0) return { label: 'PAID', color: DOC.paid }
   return null
 }
 

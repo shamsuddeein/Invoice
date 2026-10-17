@@ -1,5 +1,10 @@
-// Env-driven so the same config works for a local file (dev) and Turso (prod).
-// drizzle-kit bundles this file, so `export default` is fine in a CJS project.
+import { getDbConfig } from './lib/env-config.mjs'
+
+// Env-driven via lib/env-config.js so the same config works consistently for
+// local files (dev) and Turso (prod), while loading .env.local and preserving
+// explicit shell environment overrides.
+const { url, authToken } = getDbConfig()
+
 /** @type {import('drizzle-kit').Config} */
 export default {
   schema: './lib/schema.js',
@@ -7,8 +12,8 @@ export default {
   dialect: 'sqlite',
   driver: 'turso',
   dbCredentials: {
-    url: process.env.TURSO_DATABASE_URL || 'file:local.db',
-    authToken: process.env.TURSO_AUTH_TOKEN,
+    url,
+    authToken,
   },
   verbose: true,
   strict: true,

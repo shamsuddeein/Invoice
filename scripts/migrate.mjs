@@ -2,12 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import { createClient } from '@libsql/client'
 
-if (fs.existsSync('.env.local') && !process.env.TURSO_DATABASE_URL) {
-  process.loadEnvFile?.('.env.local')
-}
+import { getDbConfig } from '../lib/env-config.mjs'
 
-const url = process.env.TURSO_DATABASE_URL || 'file:local.db'
-const authToken = process.env.TURSO_AUTH_TOKEN || undefined
+const { url, authToken } = getDbConfig()
 const client = createClient({ url, authToken })
 
 // Apply every drizzle/*.sql migration in filename order (0000, 0001, …). Each
@@ -32,8 +29,11 @@ for (const file of files) {
     try {
       await client.execute(stmt)
     } catch (err) {
-      if (err.message?.includes('already exists')) {
-        // Table or index already exists, safe to continue
+      if (
+        err.message?.includes('already exists') ||
+        err.message?.includes('duplicate column name')
+      ) {
+        // Table, index, or column already exists, safe to continue
         continue
       }
       throw err

@@ -14,7 +14,7 @@ export default function ReceiptPreview({ business = {}, invoice, payment }) {
   const client = invoice.client || {}
   const num = { fontFamily: MONO, whiteSpace: 'nowrap' }
   // Standing as of THIS payment (see receiptStanding) — never the live balance.
-  const { paidThrough, balanceAsOf, paidInFull } = receiptStanding(invoice, payment)
+  const { invoiceTotal, paidThrough, balanceAsOf, paidInFull } = receiptStanding(invoice, payment)
   const label = { fontSize: 10, letterSpacing: 1, color: DOC.faint, fontWeight: 700, textTransform: 'uppercase' }
 
   const detailRows = [
@@ -90,7 +90,7 @@ export default function ReceiptPreview({ business = {}, invoice, payment }) {
         {/* Invoice standing */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 18 }}>
           <div style={{ width: 280 }}>
-            <SummaryRow label="Invoice total" value={formatNaira(invoice.totalAmount)} />
+            <SummaryRow label="Invoice total" value={formatNaira(invoiceTotal)} />
             <SummaryRow label="Total paid" value={formatNaira(paidThrough)} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 10, paddingTop: 10, borderTop: `1.5px solid ${DOC.rule}` }}>
               <span style={{ fontSize: 14, fontWeight: 700 }}>Balance due</span>

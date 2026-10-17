@@ -20,6 +20,7 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   // Don't advertise the framework/version in a response header (fingerprinting).
   poweredByHeader: false,
   // @react-pdf/renderer ships modern JS and pulls in fontkit/yoga; transpiling it

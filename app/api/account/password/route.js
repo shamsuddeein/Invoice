@@ -39,12 +39,13 @@ export async function POST(req) {
   try {
     const rows = await db.select().from(appAuth).where(eq(appAuth.id, 1))
     storedHash = rows[0]?.passwordHash || null
-  } catch {
-    storedHash = null
+  } catch (err) {
+    console.error('[password] Database error reading appAuth:', err)
+    return NextResponse.json({ error: 'Database error reading authentication record.' }, { status: 500 })
   }
   const currentOk = storedHash
     ? verifyPassword(currentPassword, storedHash)
-    : safeEqual(currentPassword, process.env.OWNER_PASSWORD || '')
+    : (process.env.OWNER_PASSWORD ? safeEqual(currentPassword, process.env.OWNER_PASSWORD) : false)
   if (!currentOk) {
     return NextResponse.json({ error: 'Current password is incorrect.' }, { status: 400 })
   }

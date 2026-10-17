@@ -124,7 +124,7 @@ export default function InvoiceDetailClient({ id, initialInvoice, initialBusines
   }
 
   const payments = invoice.payments || []
-  const canPay = (invoice.balanceDue || 0) > 0.01
+  const canPay = (invoice.balanceDue || 0) > 0
 
   return (
     <div>
